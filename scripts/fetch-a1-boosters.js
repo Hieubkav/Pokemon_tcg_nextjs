@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 const SET_ID = 'A1';
-const OUTPUT_FILE = path.join(__dirname, '../../A1_data.json');
-const BACKUP_FILE = path.join(__dirname, '../../A1_data.json.backup');
+const OUTPUT_FILE = path.join(__dirname, '../data/A1_data.json');
+const BACKUP_FILE = path.join(__dirname, '../data/A1_data.json.backup');
 
 async function fetchCardData(cardNumber) {
   const url = `https://raw.githubusercontent.com/tcgdex/cards-database/master/data/Pokémon%20TCG%20Pocket/Genetic%20Apex/${String(cardNumber).padStart(3, '0')}.ts`;

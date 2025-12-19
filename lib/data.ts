@@ -29,7 +29,7 @@ export interface CardSet {
   };
 }
 
-const DATA_DIR = path.join(process.cwd(), "..");
+const DATA_DIR = path.join(process.cwd(), "data");
 
 const SET_FILES: Record<string, { file: string; folder: string }> = {
   A1: { file: "A1_data.json", folder: "Genetic Apex" },
@@ -181,6 +181,7 @@ export function getLocalImagePath(setId: string, card: Card): string {
   
   // Handle special characters in card names
   cardName = cardName.replace(/:/g, "_"); // Type: Null -> Type_ Null
+  cardName = cardName.replace(/'/g, "_"); // Apostrophes to underscores for filenames
   
   if (useUnderscoreInName.includes(setId)) {
     cardName = cardName.replace(/ /g, "_");

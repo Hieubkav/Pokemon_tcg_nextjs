@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 const CARDS_DIR = path.join(__dirname, '../public/images/cards/Deluxe Pack ex');
-const OUTPUT_FILE = path.join(__dirname, '../../A4B_data.json');
-const BACKUP_FILE = path.join(__dirname, '../../A4B_data.json.backup');
+const OUTPUT_FILE = path.join(__dirname, '../data/A4B_data.json');
+const BACKUP_FILE = path.join(__dirname, '../data/A4B_data.json.backup');
 
 function parseCardFilename(filename) {
   const match = filename.match(/^A4B-(\d{3})_(.+)\.webp$/);
