@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Volume2, VolumeX } from "lucide-react";
 import { PokemonCard } from "@/components/Card";
 import type { Card } from "@/lib/data";
 import { openPackClient } from "@/lib/client-data";
 import { useSounds } from "@/lib/useSounds";
+import { useCollection } from "@/lib/collection";
 
 interface PackOpeningProps {
   cards: Card[];
@@ -34,13 +35,23 @@ export function PackOpening({
   const [gameState, setGameState] = useState<"idle" | "opening" | "revealing" | "revealed">("idle");
   const [packCards, setPackCards] = useState<Card[]>([]);
   const [flippedIndices, setFlippedIndices] = useState<Set<number>>(new Set());
+  const cardsAddedRef = useRef(false);
   
   const { playPackOpen, playCardFlip, playCardReveal, isMuted, toggleMute } = useSounds();
+  const { addCards } = useCollection();
 
   // Preload card back on mount
   useEffect(() => {
     preloadImage("/images/card-back.webp");
   }, []);
+
+  // Add cards to collection when all revealed
+  useEffect(() => {
+    if (gameState === "revealed" && packCards.length > 0 && !cardsAddedRef.current) {
+      cardsAddedRef.current = true;
+      addCards(packCards.map((c) => c.id));
+    }
+  }, [gameState, packCards, addCards]);
 
   const openPack = useCallback(() => {
     setGameState("opening");
@@ -103,6 +114,7 @@ export function PackOpening({
     setGameState("idle");
     setPackCards([]);
     setFlippedIndices(new Set());
+    cardsAddedRef.current = false;
   }, []);
 
   return (

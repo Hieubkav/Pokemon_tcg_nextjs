@@ -177,7 +177,15 @@ export function getLocalImagePath(setId: string, card: Card): string {
   const useUnderscoreInName = ["B1A"];
   
   const prefix = prefixMap[setId] || "";
-  const cardName = useUnderscoreInName.includes(setId) ? card.name.replace(/ /g, "_") : card.name;
+  let cardName = card.name;
+  
+  // Handle special characters in card names
+  cardName = cardName.replace(/:/g, "_"); // Type: Null -> Type_ Null
+  
+  if (useUnderscoreInName.includes(setId)) {
+    cardName = cardName.replace(/ /g, "_");
+  }
+  
   return `/images/cards/${setConfig.folder}/${prefix}${card.localId}_${cardName}.webp`;
 }
 
