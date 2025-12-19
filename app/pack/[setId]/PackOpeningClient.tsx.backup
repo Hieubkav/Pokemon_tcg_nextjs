@@ -1,0 +1,45 @@
+"use client";
+
+import { PackOpening } from "@/components/PackOpening";
+import type { Card } from "@/lib/data";
+
+interface PackOpeningClientProps {
+  cards: Card[];
+  setId: string;
+  setName: string;
+  packImage: string;
+  folderName: string;
+}
+
+const PREFIX_MAP: Record<string, string> = {
+  "B1A": "B1A-",
+  "A4B": "A4B-",
+  "P-B": "PROMO-B-",
+};
+
+const USE_UNDERSCORE_IN_NAME = ["B1A"];
+
+export function PackOpeningClient({
+  cards,
+  setId,
+  setName,
+  packImage,
+  folderName,
+}: PackOpeningClientProps) {
+  const getImagePath = (card: Card) => {
+    const prefix = PREFIX_MAP[setId] || "";
+    const cardName = USE_UNDERSCORE_IN_NAME.includes(setId) 
+      ? card.name.replace(/ /g, "_") 
+      : card.name;
+    return `/images/cards/${folderName}/${prefix}${card.localId}_${cardName}.webp`;
+  };
+
+  return (
+    <PackOpening
+      cards={cards}
+      setName={setName}
+      packImage={packImage}
+      getImagePath={getImagePath}
+    />
+  );
+}
