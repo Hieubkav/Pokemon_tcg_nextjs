@@ -11,8 +11,7 @@ export function openPackClient(
   let availableCards = cards;
   if (booster) {
     availableCards = cards.filter(c => {
-      const cardBoosters = (c as any).boosters;
-      return cardBoosters && Array.isArray(cardBoosters) && cardBoosters.includes(booster);
+      return c.boosters && c.boosters.includes(booster);
     });
   }
 

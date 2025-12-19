@@ -7,6 +7,7 @@ export interface Card {
   localId: string;
   name: string;
   rarity?: "common" | "uncommon" | "rare" | "double-rare" | "art-rare" | "super-rare" | "immersive" | "crown";
+  boosters?: string[];
 }
 
 export interface Booster {
@@ -52,16 +53,35 @@ export const BOOSTER_IMAGES: Record<string, string> = {
   "charizard": "/images/packs/charizard.webp",
   "mewtwo": "/images/packs/mewtwo.webp",
   "pikachu": "/images/packs/pikachu.webp",
+  "solgaleo": "/images/packs/solgaleo.webp",
+  "lunala": "/images/packs/lunala.webp",
   "mew": "/images/packs/mew.png",
   "dialga": "/images/packs/dialga.png",
   "palkia": "/images/packs/palkia.png",
-  "solgaleo": "/images/packs/solgaleo.png",
-  "lunala": "/images/packs/lunala.png",
+  "lugia": "/images/packs/lugia.webp",
+  "ho-oh": "/images/packs/ho-oh.webp",
+  "mega gyarados": "/images/packs/mega-gyarados.webp",
+  "mega blaziken": "/images/packs/mega-blaziken.webp",
+  "mega altaria": "/images/packs/mega-altaria.webp",
+  "vol. 1": "/images/packs/promo-a-vol1.webp",
+  "vol. 2": "/images/packs/promo-a-vol2.webp",
+  "vol. 3": "/images/packs/promo-a-vol3.webp",
+  "vol. 4": "/images/packs/promo-a-vol4.webp",
+  "vol. 5": "/images/packs/promo-a-vol5.webp",
+  "vol. 6": "/images/packs/promo-a-vol6.webp",
+  "vol. 7": "/images/packs/promo-a-vol7.webp",
+  "vol. 8": "/images/packs/promo-a-vol8.webp",
+  "vol. 9": "/images/packs/promo-a-vol9.webp",
+  "vol. 10": "/images/packs/promo-a-vol10.webp",
+  "vol. 11": "/images/packs/promo-a-vol11.webp",
 };
 
 const LOCAL_LOGO_IMAGES: Record<string, string> = {
+  "A4": "/images/logos/A4.webp",
   "A4B": "/images/logos/A4B.webp",
   "B1A": "/images/logos/B1A.webp",
+  "P-A": "/images/logos/P-A.webp",
+  "P-B": "/images/logos/P-B.webp",
 };
 
 export function getLocalLogoPath(setId: string): string {
@@ -69,6 +89,11 @@ export function getLocalLogoPath(setId: string): string {
 }
 
 const LOCAL_PACK_IMAGES: Record<string, string> = {
+  "A2a": "/images/packs/A2a.webp",
+  "A2b": "/images/packs/A2b.webp",
+  "A3a": "/images/packs/A3a.webp",
+  "A3b": "/images/packs/A3b.webp",
+  "A4a": "/images/packs/A4a.webp",
   "A4B": "/images/packs/A4B.webp",
   "B1A": "/images/packs/B1A.webp",
 };
@@ -121,14 +146,22 @@ export async function getSet(setId: string): Promise<CardSet | null> {
 }
 
 export async function getAllSets(): Promise<CardSet[]> {
-  const sets: CardSet[] = [];
+  const regularSets: CardSet[] = [];
+  const promoSets: CardSet[] = [];
   
   for (const setId of Object.keys(SET_FILES)) {
     const set = await getSet(setId);
-    if (set) sets.push(set);
+    if (set) {
+      if (setId.startsWith("P-")) {
+        promoSets.push(set);
+      } else {
+        regularSets.push(set);
+      }
+    }
   }
   
-  return sets;
+  // Reverse regular sets, keep promos at the end
+  return [...regularSets.reverse(), ...promoSets];
 }
 
 export function getLocalImagePath(setId: string, card: Card): string {

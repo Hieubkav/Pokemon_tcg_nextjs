@@ -17,7 +17,15 @@ export default async function PackPage({ params }: PageProps) {
 
   const folderName = getSetFolderName(setId);
   const logoSrc = getLocalLogoPath(setId) || set.logo;
-  const packImage = getLocalPackImage(setId) || set.logo;
+
+  // Get pack image: try local pack image first, then booster image, then logo
+  let packImage = getLocalPackImage(setId);
+  if (!packImage && set.boosters && set.boosters.length === 1) {
+    const boosterKey = set.boosters[0].name.toLowerCase();
+    packImage = BOOSTER_IMAGES[boosterKey] || set.logo;
+  } else if (!packImage) {
+    packImage = set.logo;
+  }
 
   return (
     <main className="min-h-screen">
