@@ -48,11 +48,12 @@ export function openPackClient(
   booster?: string,
   setId?: string
 ): Card[] {
-  // Filter cards by booster if specified
+  // Filter cards by booster if specified (case-insensitive)
   let availableCards = cards;
   if (booster) {
+    const boosterLower = booster.toLowerCase();
     availableCards = cards.filter(c => {
-      return c.boosters && c.boosters.includes(booster);
+      return c.boosters && c.boosters.some(b => b.toLowerCase() === boosterLower);
     });
   }
 

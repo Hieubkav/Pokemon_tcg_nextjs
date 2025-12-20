@@ -215,15 +215,15 @@ function getRarityFromId(localId: string, setId: string): Card["rarity"] {
     return "crown";
   }
   
-  // Mega Rising (B1) - new mega evolution set
+  // Mega Rising (B1) - 331 cards, official 226
   if (setId === "B1") {
-    if (num <= 100) return "common";
-    if (num <= 130) return "uncommon";
-    if (num <= 150) return "rare";
-    if (num <= 170) return "double-rare";
-    if (num <= 185) return "art-rare";
-    if (num <= 195) return "super-rare";
-    if (num <= 198) return "immersive";
+    if (num <= 140) return "common";
+    if (num <= 190) return "uncommon";
+    if (num <= 226) return "rare";
+    if (num <= 270) return "double-rare";
+    if (num <= 300) return "art-rare";
+    if (num <= 320) return "super-rare";
+    if (num <= 328) return "immersive";
     return "crown";
   }
   
