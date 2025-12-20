@@ -35,9 +35,16 @@ export function PackOpeningClient({
 
   const getImagePath = (card: Card) => {
     const prefix = PREFIX_MAP[setId] || "";
-    const cardName = USE_UNDERSCORE_IN_NAME.includes(setId)
-      ? card.name.replace(/ /g, "_")
-      : card.name;
+    let cardName = card.name;
+    
+    // Handle special characters in card names
+    cardName = cardName.replace(/:/g, "_"); // Type: Null -> Type_ Null
+    cardName = cardName.replace(/'/g, "_"); // Apostrophes to underscores
+    
+    if (USE_UNDERSCORE_IN_NAME.includes(setId)) {
+      cardName = cardName.replace(/ /g, "_");
+    }
+    
     return `/images/cards/${folderName}/${prefix}${card.localId}_${cardName}.webp`;
   };
 

@@ -69,7 +69,7 @@ export function PackOpening({
     playPackOpen();
 
     // Generate cards early but delay reveal for smoother animation
-    const newPack = openPackClient(cards, packSize, booster);
+    const newPack = openPackClient(cards, packSize, booster, setId);
     
     // Preload all card images
     newPack.forEach(card => preloadImage(getImagePath(card)));
@@ -78,7 +78,7 @@ export function PackOpening({
       setPackCards(newPack);
       setGameState("revealing");
     }, 2200); // Longer delay for preloading
-  }, [cards, packSize, playPackOpen, getImagePath, booster]);
+  }, [cards, packSize, playPackOpen, getImagePath, booster, setId]);
 
   const toggleCard = useCallback((index: number) => {
     const card = packCards[index];

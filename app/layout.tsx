@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { CollectionProvider } from "@/lib/collection";
 
@@ -35,6 +36,7 @@ export default function RootLayout({
         <CollectionProvider>
           {children}
         </CollectionProvider>
+        <Analytics />
       </body>
     </html>
   );

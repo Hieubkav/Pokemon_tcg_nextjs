@@ -105,16 +105,148 @@ export function getLocalPackImage(setId: string): string | null {
 function getRarityFromId(localId: string, setId: string): Card["rarity"] {
   const num = parseInt(localId, 10);
   
+  // Genetic Apex (A1) - 286 cards
   if (setId === "A1") {
-    if (num <= 226) return "common";
-    if (num <= 250) return "uncommon";
-    if (num <= 265) return "rare";
-    if (num <= 279) return "double-rare";
-    if (num <= 282) return "art-rare";
+    if (num <= 178) return "common";
+    if (num <= 207) return "uncommon";
+    if (num <= 226) return "rare";
+    if (num <= 253) return "double-rare";
+    if (num <= 271) return "art-rare";
     if (num <= 283) return "super-rare";
+    if (num <= 285) return "immersive";
     return "crown";
   }
   
+  // Mythical Island (A1a) - 86 cards
+  if (setId === "A1a") {
+    if (num <= 52) return "common";
+    if (num <= 62) return "uncommon";
+    if (num <= 68) return "rare";
+    if (num <= 77) return "double-rare";
+    if (num <= 82) return "art-rare";
+    if (num <= 84) return "super-rare";
+    if (num <= 85) return "immersive";
+    return "crown";
+  }
+  
+  // Space-Time Smackdown (A2) - 163 cards
+  if (setId === "A2") {
+    if (num <= 96) return "common";
+    if (num <= 120) return "uncommon";
+    if (num <= 135) return "rare";
+    if (num <= 150) return "double-rare";
+    if (num <= 157) return "art-rare";
+    if (num <= 161) return "super-rare";
+    if (num <= 162) return "immersive";
+    return "crown";
+  }
+  
+  // Triumphant Light (A2a) - 96 cards
+  if (setId === "A2a") {
+    if (num <= 56) return "common";
+    if (num <= 68) return "uncommon";
+    if (num <= 75) return "rare";
+    if (num <= 84) return "double-rare";
+    if (num <= 91) return "art-rare";
+    if (num <= 94) return "super-rare";
+    if (num <= 95) return "immersive";
+    return "crown";
+  }
+  
+  // Shining Revelry (A2b) - 111 cards, includes shiny cards
+  // Shiny 1-star mapped to art-rare, Shiny 2-star mapped to super-rare
+  if (setId === "A2b") {
+    if (num <= 44) return "common";
+    if (num <= 57) return "uncommon";
+    if (num <= 68) return "rare";
+    if (num <= 78) return "double-rare";
+    if (num <= 87) return "art-rare";      // Full art + Shiny 1-star (097-106)
+    if (num <= 96) return "super-rare";    // Full art EX
+    if (num <= 106) return "art-rare";     // Shiny 1-star (mapped to art-rare rates)
+    if (num <= 110) return "super-rare";   // Shiny 2-star (mapped to super-rare rates)
+    return "crown";
+  }
+  
+  // Celestial Guardians (A3) - similar structure
+  if (setId === "A3") {
+    if (num <= 100) return "common";
+    if (num <= 125) return "uncommon";
+    if (num <= 140) return "rare";
+    if (num <= 155) return "double-rare";
+    if (num <= 165) return "art-rare";
+    if (num <= 172) return "super-rare";
+    if (num <= 174) return "immersive";
+    return "crown";
+  }
+  
+  // Wisdom of Sea and Sky (A4) - 241 cards, official 161
+  if (setId === "A4") {
+    if (num <= 100) return "common";
+    if (num <= 130) return "uncommon";
+    if (num <= 161) return "rare";
+    if (num <= 190) return "double-rare";
+    if (num <= 215) return "art-rare";
+    if (num <= 235) return "super-rare";
+    if (num <= 239) return "immersive";
+    return "crown";
+  }
+  
+  // Mini sets (A3a, A3b, A4a) - similar to A2a
+  if (setId === "A3a" || setId === "A3b" || setId === "A4a") {
+    if (num <= 55) return "common";
+    if (num <= 67) return "uncommon";
+    if (num <= 75) return "rare";
+    if (num <= 84) return "double-rare";
+    if (num <= 90) return "art-rare";
+    if (num <= 94) return "super-rare";
+    if (num <= 95) return "immersive";
+    return "crown";
+  }
+  
+  // Deluxe Pack ex (A4B) - reprints with guaranteed EX
+  // Most cards are double-rare or higher
+  if (setId === "A4B") {
+    if (num <= 200) return "common";
+    if (num <= 280) return "uncommon";
+    if (num <= 320) return "rare";
+    if (num <= 353) return "double-rare";
+    if (num <= 365) return "art-rare";
+    if (num <= 375) return "super-rare";
+    return "crown";
+  }
+  
+  // Mega Rising (B1) - new mega evolution set
+  if (setId === "B1") {
+    if (num <= 100) return "common";
+    if (num <= 130) return "uncommon";
+    if (num <= 150) return "rare";
+    if (num <= 170) return "double-rare";
+    if (num <= 185) return "art-rare";
+    if (num <= 195) return "super-rare";
+    if (num <= 198) return "immersive";
+    return "crown";
+  }
+  
+  // Crimson Blaze (B1A) - mini set, 103 cards
+  if (setId === "B1A") {
+    if (num <= 44) return "common";
+    if (num <= 57) return "uncommon";
+    if (num <= 65) return "rare";
+    if (num <= 69) return "double-rare";
+    if (num <= 75) return "art-rare";
+    if (num <= 82) return "super-rare";
+    if (num <= 87) return "immersive";
+    if (num <= 97) return "art-rare";     // Shiny 1-star
+    if (num <= 102) return "super-rare";  // Shiny 2-star
+    return "crown";
+  }
+  
+  // Promo packs - usually all cards are art-rare or higher
+  if (setId === "P-A" || setId === "P-B") {
+    return "art-rare";
+  }
+  
+  // Default fallback for unknown sets
   if (num <= 150) return "common";
   if (num <= 200) return "uncommon";
   if (num <= 230) return "rare";
