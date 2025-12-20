@@ -2,6 +2,8 @@
 
 import { useCallback, useRef, useEffect, useState } from "react";
 
+export type RarityLevel = "common" | "uncommon" | "rare" | "super-rare" | "ultra-rare" | "crown" | "immersive";
+
 export function useSounds() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const [isMuted, setIsMuted] = useState(false);
@@ -79,48 +81,234 @@ export function useSounds() {
     source.start();
   }, [ensureContext, isMuted]);
 
-  const playPackOpen = useCallback(() => {
-    // Whoosh + sparkle effect
-    playNoise(0.3, 0.15);
-    setTimeout(() => playTone(800, 0.1, "sine", 0.2), 100);
-    setTimeout(() => playTone(1200, 0.1, "sine", 0.15), 150);
-    setTimeout(() => playTone(1600, 0.15, "sine", 0.1), 200);
-    // Magical chime
+  const playPackTear = useCallback(() => {
+    if (isMuted) return;
+    const ctx = ensureContext();
+    if (!ctx) return;
+
+    // Layer 1: Main tear sound - longer, louder
+    const bufferSize = ctx.sampleRate * 0.5;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+
+    for (let i = 0; i < bufferSize; i++) {
+      const t = i / bufferSize;
+      // Crinkle texture with more variation
+      const noise = Math.random() * 2 - 1;
+      const envelope = Math.sin(t * Math.PI) * (1 - t * 0.3);
+      data[i] = noise * envelope * (1 + Math.sin(t * 50) * 0.3);
+    }
+
+    const source = ctx.createBufferSource();
+    const gainNode = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    source.buffer = buffer;
+    filter.type = "bandpass";
+    filter.frequency.setValueAtTime(2500, ctx.currentTime);
+    filter.frequency.linearRampToValueAtTime(600, ctx.currentTime + 0.4);
+    filter.Q.value = 0.8;
+
+    gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.2);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
+
+    source.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    source.start();
+
+    // Layer 2: Crisp high freq crackle
     setTimeout(() => {
-      playTone(523, 0.3, "sine", 0.2);  // C5
-      setTimeout(() => playTone(659, 0.3, "sine", 0.18), 50);  // E5
-      setTimeout(() => playTone(784, 0.4, "sine", 0.15), 100); // G5
-      setTimeout(() => playTone(1047, 0.5, "sine", 0.12), 150); // C6
-    }, 250);
-  }, [playTone, playNoise]);
+      const crackleSize = ctx.sampleRate * 0.15;
+      const crackleBuffer = ctx.createBuffer(1, crackleSize, ctx.sampleRate);
+      const crackleData = crackleBuffer.getChannelData(0);
+      for (let i = 0; i < crackleSize; i++) {
+        crackleData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (crackleSize * 0.3));
+      }
+      const crackleSource = ctx.createBufferSource();
+      const crackleGain = ctx.createGain();
+      const highPass = ctx.createBiquadFilter();
+      
+      crackleSource.buffer = crackleBuffer;
+      highPass.type = "highpass";
+      highPass.frequency.value = 3000;
+      crackleGain.gain.setValueAtTime(0.35, ctx.currentTime);
+      
+      crackleSource.connect(highPass);
+      highPass.connect(crackleGain);
+      crackleGain.connect(ctx.destination);
+      crackleSource.start();
+    }, 50);
+
+    // Layer 3: Satisfying pop/snap at end
+    setTimeout(() => {
+      playTone(350, 0.1, "triangle", 0.25);
+      playTone(500, 0.08, "sine", 0.15);
+    }, 180);
+  }, [ensureContext, isMuted, playTone]);
+
+  const playPackOpen = useCallback(() => {
+    playPackTear();
+    setTimeout(() => {
+      playTone(523, 0.3, "sine", 0.2);
+      setTimeout(() => playTone(659, 0.3, "sine", 0.18), 50);
+      setTimeout(() => playTone(784, 0.4, "sine", 0.15), 100);
+      setTimeout(() => playTone(1047, 0.5, "sine", 0.12), 150);
+    }, 300);
+  }, [playTone, playPackTear]);
 
   const playCardFlip = useCallback(() => {
-    // Quick swoosh
     playNoise(0.08, 0.1);
     playTone(300, 0.05, "triangle", 0.15);
     setTimeout(() => playTone(500, 0.08, "triangle", 0.1), 30);
   }, [playTone, playNoise]);
 
+  // Different reveal sounds based on rarity
+  const playRarityReveal = useCallback((rarity: RarityLevel) => {
+    switch (rarity) {
+      case "common":
+        playTone(400, 0.1, "triangle", 0.12);
+        setTimeout(() => playTone(500, 0.12, "triangle", 0.08), 40);
+        break;
+
+      case "uncommon":
+        playTone(440, 0.12, "sine", 0.15);
+        setTimeout(() => playTone(554, 0.12, "sine", 0.12), 50);
+        setTimeout(() => playTone(659, 0.15, "sine", 0.1), 100);
+        break;
+
+      case "rare":
+        // Ding sound - ascending notes
+        playTone(523, 0.15, "sine", 0.22);
+        setTimeout(() => playTone(659, 0.15, "sine", 0.2), 70);
+        setTimeout(() => playTone(784, 0.2, "sine", 0.18), 140);
+        setTimeout(() => playTone(1047, 0.25, "sine", 0.15), 210);
+        break;
+
+      case "super-rare":
+        // Rainbow sparkle effect
+        playTone(523, 0.2, "sine", 0.25);
+        setTimeout(() => playTone(659, 0.18, "sine", 0.23), 60);
+        setTimeout(() => playTone(784, 0.18, "sine", 0.22), 120);
+        setTimeout(() => playTone(880, 0.18, "sine", 0.2), 180);
+        setTimeout(() => playTone(1047, 0.25, "sine", 0.2), 240);
+        setTimeout(() => playTone(1319, 0.3, "sine", 0.18), 300);
+        // Echo sparkles
+        setTimeout(() => playTone(1568, 0.15, "sine", 0.1), 400);
+        setTimeout(() => playTone(2093, 0.15, "sine", 0.08), 480);
+        break;
+
+      case "ultra-rare":
+        // Magical fanfare
+        playNoise(0.15, 0.1);
+        setTimeout(() => {
+          playTone(392, 0.2, "sine", 0.28);
+          playTone(523, 0.2, "sine", 0.25);
+        }, 50);
+        setTimeout(() => {
+          playTone(523, 0.2, "sine", 0.26);
+          playTone(659, 0.2, "sine", 0.24);
+        }, 150);
+        setTimeout(() => {
+          playTone(659, 0.25, "sine", 0.25);
+          playTone(784, 0.25, "sine", 0.23);
+        }, 250);
+        setTimeout(() => {
+          playTone(784, 0.25, "sine", 0.24);
+          playTone(1047, 0.3, "sine", 0.22);
+        }, 350);
+        setTimeout(() => playTone(1319, 0.4, "sine", 0.18), 500);
+        setTimeout(() => playTone(1568, 0.35, "sine", 0.12), 600);
+        setTimeout(() => playTone(2093, 0.4, "sine", 0.1), 700);
+        break;
+
+      case "crown":
+      case "immersive":
+        // Epic legendary reveal
+        playNoise(0.2, 0.12);
+        // Deep bass rumble
+        setTimeout(() => playTone(110, 0.5, "sine", 0.3), 0);
+        setTimeout(() => playTone(165, 0.4, "sine", 0.25), 100);
+        // Rising chord
+        setTimeout(() => {
+          playTone(262, 0.3, "sine", 0.28);
+          playTone(330, 0.3, "sine", 0.26);
+          playTone(392, 0.3, "sine", 0.24);
+        }, 200);
+        setTimeout(() => {
+          playTone(392, 0.3, "sine", 0.28);
+          playTone(494, 0.3, "sine", 0.26);
+          playTone(587, 0.3, "sine", 0.24);
+        }, 350);
+        setTimeout(() => {
+          playTone(523, 0.35, "sine", 0.3);
+          playTone(659, 0.35, "sine", 0.28);
+          playTone(784, 0.35, "sine", 0.26);
+        }, 500);
+        // High sparkle cascade
+        setTimeout(() => playTone(1047, 0.3, "sine", 0.2), 700);
+        setTimeout(() => playTone(1319, 0.25, "sine", 0.18), 780);
+        setTimeout(() => playTone(1568, 0.25, "sine", 0.16), 860);
+        setTimeout(() => playTone(2093, 0.3, "sine", 0.14), 940);
+        setTimeout(() => playTone(2637, 0.4, "sine", 0.1), 1020);
+        break;
+    }
+  }, [playTone, playNoise]);
+
   const playCardReveal = useCallback((isRare = false) => {
     if (isRare) {
-      // Sparkly reveal for rare cards
-      playTone(523, 0.2, "sine", 0.25);
-      setTimeout(() => playTone(659, 0.2, "sine", 0.22), 80);
-      setTimeout(() => playTone(784, 0.25, "sine", 0.2), 160);
-      setTimeout(() => playTone(1047, 0.3, "sine", 0.18), 240);
-      setTimeout(() => playTone(1319, 0.4, "sine", 0.15), 320);
+      playRarityReveal("rare");
     } else {
-      // Simple reveal
-      playTone(400, 0.1, "triangle", 0.15);
-      setTimeout(() => playTone(600, 0.15, "triangle", 0.1), 50);
+      playRarityReveal("common");
     }
-  }, [playTone]);
+  }, [playRarityReveal]);
 
   const playSparkle = useCallback(() => {
     const notes = [1047, 1319, 1568, 2093];
     notes.forEach((freq, i) => {
       setTimeout(() => playTone(freq, 0.15, "sine", 0.08), i * 40);
     });
+  }, [playTone]);
+
+  // Multi-pack special sounds
+  const playMultiPackStart = useCallback(() => {
+    // Exciting buildup
+    playNoise(0.2, 0.15);
+    const baseNotes = [262, 330, 392, 523];
+    baseNotes.forEach((freq, i) => {
+      setTimeout(() => playTone(freq, 0.2, "sine", 0.2 + i * 0.02), i * 80);
+    });
+    setTimeout(() => {
+      playTone(784, 0.4, "sine", 0.25);
+      playTone(1047, 0.4, "sine", 0.22);
+    }, 400);
+  }, [playTone, playNoise]);
+
+  const playPackTransition = useCallback(() => {
+    // Quick whoosh between packs
+    playNoise(0.1, 0.1);
+    playTone(600, 0.1, "triangle", 0.15);
+    setTimeout(() => playTone(800, 0.1, "triangle", 0.1), 50);
+  }, [playTone, playNoise]);
+
+  const playMultiPackComplete = useCallback(() => {
+    // Triumphant finish
+    playTone(523, 0.2, "sine", 0.25);
+    playTone(659, 0.2, "sine", 0.23);
+    playTone(784, 0.2, "sine", 0.21);
+    setTimeout(() => {
+      playTone(784, 0.25, "sine", 0.26);
+      playTone(988, 0.25, "sine", 0.24);
+      playTone(1175, 0.25, "sine", 0.22);
+    }, 200);
+    setTimeout(() => {
+      playTone(1047, 0.4, "sine", 0.28);
+      playTone(1319, 0.4, "sine", 0.26);
+      playTone(1568, 0.4, "sine", 0.24);
+    }, 400);
+    // Final sparkle
+    setTimeout(() => playTone(2093, 0.5, "sine", 0.15), 650);
   }, [playTone]);
 
   const toggleMute = useCallback(() => {
@@ -131,7 +319,11 @@ export function useSounds() {
     playPackOpen,
     playCardFlip,
     playCardReveal,
+    playRarityReveal,
     playSparkle,
+    playMultiPackStart,
+    playPackTransition,
+    playMultiPackComplete,
     isMuted,
     toggleMute,
   };
