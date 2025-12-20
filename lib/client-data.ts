@@ -14,15 +14,15 @@ const SLOT4_RATES = {
 };
 
 // Slot 5 rates (cumulative thresholds)
-// Based on actual game data: most packs give uncommon/rare
+// Based on official Pokemon TCG Pocket rates (Game8, Dexerto, Serebii)
 const SLOT5_RATES = {
-  crown: 0.0004,     // 0.04% - Crown rare
-  immersive: 0.0026, // 0.22% - Immersive/3-star
-  superRare: 0.0076, // 0.5% - Super rare/2-star  
-  artRare: 0.0333,   // 2.57% - Art rare/1-star
-  doubleRare: 0.05,  // 1.67% - EX/4-diamond
-  rare: 0.10,        // 5% - Rare/3-diamond
-  uncommon: 1.0,     // 90% - Uncommon (remaining)
+  crown: 0.002,      // 0.2% - Crown rare
+  immersive: 0.005,  // 0.3% - Immersive/3-star
+  superRare: 0.047,  // 4.2% - Super rare/2-star  
+  artRare: 0.085,    // 3.8% - Art rare/1-star
+  doubleRare: 0.135, // 5% - EX/4-diamond
+  rare: 0.20,        // 6.5% - Rare/3-diamond
+  uncommon: 1.0,     // 80% - Uncommon (remaining)
 };
 
 // Deluxe Pack ex (A4B) - 4 cards, guaranteed 1 EX (4◇+) at slot 4
