@@ -230,9 +230,9 @@ export function PackOpening({
                 </div>
               )}
 
-              {/* 4 cards - Anniversary pack (2x2 grid) */}
+              {/* 4 cards - Anniversary pack (2x2 mobile/tablet, 1x4 desktop) */}
               {packSize === 4 && (
-                <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 w-full max-w-md">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4 w-full max-w-md md:max-w-3xl">
                   {packCards.map((card, index) => (
                     <motion.div
                       key={`${card.id}-${index}`}
