@@ -216,15 +216,23 @@ function getRarityFromId(localId: string, setId: string): Card["rarity"] {
   }
   
   // Mega Rising (B1) - 331 cards, official 226
+  // B1 has EX cards scattered throughout (001-226), special cards from 227+
+  // Based on Serebii/Limitless TCG data:
+  // - 001-226: Base set (commons, uncommons, rares + EX cards mixed in)
+  // - 227-250: Art rare (☆) - illustration versions
+  // - 251-271: Super rare (☆☆) - full art versions
+  // - 272-286: Super rare (☆☆) - rainbow/special illustrations
+  // - 287-316: Art rare (shiny ☆) - shiny Pokemon
+  // - 317-328: Super rare (shiny ☆☆) - shiny EX Pokemon
+  // - 329-331: Crown rare (👑)
   if (setId === "B1") {
-    if (num <= 140) return "common";
-    if (num <= 190) return "uncommon";
-    if (num <= 226) return "rare";
-    if (num <= 270) return "double-rare";
-    if (num <= 300) return "art-rare";
-    if (num <= 320) return "super-rare";
-    if (num <= 328) return "immersive";
-    return "crown";
+    if (num >= 329) return "crown";
+    if (num >= 317 && num <= 328) return "super-rare"; // shiny EX
+    if (num >= 287 && num <= 316) return "art-rare"; // shiny
+    if (num >= 251 && num <= 286) return "super-rare"; // full art + rainbow
+    if (num >= 227 && num <= 250) return "art-rare"; // illustration rare
+    // For base cards (001-226), return null to trigger name-based detection
+    return undefined as unknown as Card["rarity"];
   }
   
   // Crimson Blaze (B1A) - mini set, 103 cards
@@ -255,6 +263,41 @@ function getRarityFromId(localId: string, setId: string): Card["rarity"] {
   return "super-rare";
 }
 
+// B1 Mega Rising - Uncommon cards (◊◊) based on Limitless TCG data
+const B1_UNCOMMON_IDS = new Set([
+  "009", "012", "024", "026", "029", "034", "040", "042", "047", "054",
+  "059", "065", "066", "072", "075", "077", "079", "083", "087", "091",
+  "093", "096", "098", "100", "104", "108", "113", "116", "118", "123",
+  "127", "129", "131", "133", "140", "142", "144", "146", "150", "153",
+  "156", "162", "164", "167", "171", "178", "182", "186", "189", "200",
+  "202", "205", "206", "207", "208", "210", "212", "213", "215", "217",
+  "218", "219", "220", "221", "222", "223", "224", "225", "226"
+]);
+
+// B1 Mega Rising - Rare cards (◊◊◊) based on Limitless TCG data
+const B1_RARE_IDS = new Set([
+  "005", "007", "010", "018", "020", "027", "032", "035", "043", "046",
+  "051", "055", "057", "067", "069", "070", "080", "084", "088", "105",
+  "106", "109", "111", "114", "120", "132", "134", "136", "137", "147",
+  "149", "154", "157", "158", "165", "168", "169", "172", "175", "179",
+  "187", "192", "194", "197", "203", "214", "216"
+]);
+
+// B1 Mega Rising - Double-rare/EX cards (◊◊◊◊) based on Limitless TCG data
+const B1_DOUBLE_RARE_IDS = new Set([
+  "002", "016", "031", "036", "052", "073", "081", "085", "102", "121",
+  "124", "151", "160", "174", "183"
+]);
+
+// Detect rarity from card data for B1 set (mixed structure)
+// Based on Limitless TCG official rarity data
+function getRarityFromB1Data(localId: string): Card["rarity"] {
+  if (B1_DOUBLE_RARE_IDS.has(localId)) return "double-rare";
+  if (B1_RARE_IDS.has(localId)) return "rare";
+  if (B1_UNCOMMON_IDS.has(localId)) return "uncommon";
+  return "common";
+}
+
 export async function getSet(setId: string): Promise<CardSet | null> {
   const setConfig = SET_FILES[setId];
   if (!setConfig) return null;
@@ -263,10 +306,19 @@ export async function getSet(setId: string): Promise<CardSet | null> {
     const filePath = path.join(DATA_DIR, setConfig.file);
     const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
     
-    const cards = data.cards.map((card: Card) => ({
-      ...card,
-      rarity: getRarityFromId(card.localId, setId),
-    }));
+    const cards = data.cards.map((card: Card) => {
+      let rarity = getRarityFromId(card.localId, setId);
+      
+      // For B1 base cards (001-226), use Limitless TCG rarity data
+      if (!rarity && setId === "B1") {
+        rarity = getRarityFromB1Data(card.localId);
+      }
+      
+      return {
+        ...card,
+        rarity: rarity || "common",
+      };
+    });
 
     return {
       ...data,
@@ -329,41 +381,76 @@ export function openPack(cards: Card[], packSize: number = 5): Card[] {
   const doubleRareCards = cards.filter(c => c.rarity === "double-rare");
   const artRareCards = cards.filter(c => c.rarity === "art-rare");
   const superRareCards = cards.filter(c => c.rarity === "super-rare");
+  const immersiveCards = cards.filter(c => c.rarity === "immersive");
   const crownCards = cards.filter(c => c.rarity === "crown");
 
   const pack: Card[] = [];
   
-  // First 3 cards: common
+  // 0.05% chance for Rare Pack (all cards are Star rarity or higher)
+  const isRarePack = Math.random() < 0.0005;
+  
+  if (isRarePack) {
+    const rarePoolCards = [...artRareCards, ...superRareCards, ...immersiveCards, ...crownCards];
+    if (rarePoolCards.length > 0) {
+      for (let i = 0; i < packSize; i++) {
+        pack.push(rarePoolCards[Math.floor(Math.random() * rarePoolCards.length)]);
+      }
+      return pack;
+    }
+  }
+
+  // Slot 1-3: Almost always Common (based on Serebii ~2.04% per common card in slot 1-3)
+  // Aggregate: ~99.5% Common, ~0.4% Uncommon, ~0.1% Rare
   for (let i = 0; i < 3; i++) {
-    if (commonCards.length > 0) {
+    const roll = Math.random();
+    if (roll < 0.995 && commonCards.length > 0) {
+      pack.push(commonCards[Math.floor(Math.random() * commonCards.length)]);
+    } else if (roll < 0.999 && uncommonCards.length > 0) {
+      pack.push(uncommonCards[Math.floor(Math.random() * uncommonCards.length)]);
+    } else if (rareCards.length > 0) {
+      pack.push(rareCards[Math.floor(Math.random() * rareCards.length)]);
+    } else if (commonCards.length > 0) {
       pack.push(commonCards[Math.floor(Math.random() * commonCards.length)]);
     }
   }
   
-  // 4th card: uncommon or better
+  // Slot 4: Higher chance for Uncommon/Rare (based on Serebii slot 4 rates)
+  // Aggregate: ~90% Common, ~7% Uncommon, ~2.5% Rare, ~0.5% Higher
   const roll4 = Math.random();
-  if (roll4 < 0.7 && uncommonCards.length > 0) {
+  if (roll4 < 0.90 && commonCards.length > 0) {
+    pack.push(commonCards[Math.floor(Math.random() * commonCards.length)]);
+  } else if (roll4 < 0.97 && uncommonCards.length > 0) {
     pack.push(uncommonCards[Math.floor(Math.random() * uncommonCards.length)]);
-  } else if (roll4 < 0.9 && rareCards.length > 0) {
+  } else if (roll4 < 0.995 && rareCards.length > 0) {
     pack.push(rareCards[Math.floor(Math.random() * rareCards.length)]);
-  } else if (doubleRareCards.length > 0) {
+  } else if (roll4 < 0.9995 && doubleRareCards.length > 0) {
     pack.push(doubleRareCards[Math.floor(Math.random() * doubleRareCards.length)]);
-  } else if (uncommonCards.length > 0) {
-    pack.push(uncommonCards[Math.floor(Math.random() * uncommonCards.length)]);
+  } else if (superRareCards.length > 0) {
+    pack.push(superRareCards[Math.floor(Math.random() * superRareCards.length)]);
+  } else if (commonCards.length > 0) {
+    pack.push(commonCards[Math.floor(Math.random() * commonCards.length)]);
   }
   
-  // 5th card: rare slot with chance for ultra rare
+  // Slot 5: Main rare slot (based on Serebii official rates)
+  // Crown: 0.16%, Immersive: 0.16%, Super Rare: 4.222%, Art Rare: 3.846%
+  // Double Rare: 5%, Rare: 6.66%, Uncommon: 20.56%, Common: 57.82%
   const roll5 = Math.random();
-  if (roll5 < 0.005 && crownCards.length > 0) {
+  if (roll5 < 0.0016 && crownCards.length > 0) {
     pack.push(crownCards[Math.floor(Math.random() * crownCards.length)]);
-  } else if (roll5 < 0.02 && superRareCards.length > 0) {
+  } else if (roll5 < 0.0032 && immersiveCards.length > 0) {
+    pack.push(immersiveCards[Math.floor(Math.random() * immersiveCards.length)]);
+  } else if (roll5 < 0.0454 && superRareCards.length > 0) {
     pack.push(superRareCards[Math.floor(Math.random() * superRareCards.length)]);
-  } else if (roll5 < 0.05 && artRareCards.length > 0) {
+  } else if (roll5 < 0.0839 && artRareCards.length > 0) {
     pack.push(artRareCards[Math.floor(Math.random() * artRareCards.length)]);
-  } else if (roll5 < 0.15 && doubleRareCards.length > 0) {
+  } else if (roll5 < 0.1339 && doubleRareCards.length > 0) {
     pack.push(doubleRareCards[Math.floor(Math.random() * doubleRareCards.length)]);
-  } else if (roll5 < 0.5 && rareCards.length > 0) {
+  } else if (roll5 < 0.2005 && rareCards.length > 0) {
     pack.push(rareCards[Math.floor(Math.random() * rareCards.length)]);
+  } else if (roll5 < 0.4061 && uncommonCards.length > 0) {
+    pack.push(uncommonCards[Math.floor(Math.random() * uncommonCards.length)]);
+  } else if (commonCards.length > 0) {
+    pack.push(commonCards[Math.floor(Math.random() * commonCards.length)]);
   } else if (uncommonCards.length > 0) {
     pack.push(uncommonCards[Math.floor(Math.random() * uncommonCards.length)]);
   }
