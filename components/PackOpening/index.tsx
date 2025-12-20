@@ -59,7 +59,7 @@ export function PackOpening({
     playPackOpen();
 
     // Generate cards early but delay reveal for smoother animation
-    const newPack = openPackClient(cards, 6, booster);
+    const newPack = openPackClient(cards, 5, booster);
     
     // Preload all card images
     newPack.forEach(card => preloadImage(getImagePath(card)));
@@ -186,34 +186,69 @@ export function PackOpening({
             exit={{ opacity: 0 }}
             className="w-full flex flex-col items-center gap-4"
           >
-            {/* 3x2 Grid */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 w-full max-w-2xl px-2">
-              {packCards.map((card, index) => (
-                <motion.div
-                  key={`${card.id}-${index}`}
-                  initial={{ opacity: 0, y: 50, scale: 0.8 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: index * 0.1, duration: 0.4, type: "spring" }}
-                  className="aspect-[5/7] relative cursor-pointer"
-                  onClick={() => toggleCard(index)}
-                >
-                  <PokemonCard
-                    card={card}
-                    imageSrc={getImagePath(card)}
-                    isFlipped={flippedIndices.has(index)}
-                    showBack={true}
-                  />
-                  {!flippedIndices.has(index) && (
-                    <motion.span 
-                      className="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-yellow-400 text-slate-900 text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-semibold"
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ repeat: Infinity, duration: 1.5 }}
+            {/* 3 cards top + 2 cards bottom */}
+            <div className="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 w-full max-w-2xl px-2">
+              {/* Top row - 3 cards */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 w-full">
+                {packCards.slice(0, 3).map((card, index) => (
+                  <motion.div
+                    key={`${card.id}-${index}`}
+                    initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ delay: index * 0.1, duration: 0.4, type: "spring" }}
+                    className="aspect-[5/7] relative cursor-pointer"
+                    onClick={() => toggleCard(index)}
+                  >
+                    <PokemonCard
+                      card={card}
+                      imageSrc={getImagePath(card)}
+                      isFlipped={flippedIndices.has(index)}
+                      showBack={true}
+                    />
+                    {!flippedIndices.has(index) && (
+                      <motion.span 
+                        className="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-yellow-400 text-slate-900 text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-semibold"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ repeat: Infinity, duration: 1.5 }}
+                      >
+                        Tap
+                      </motion.span>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+              {/* Bottom row - 2 cards centered */}
+              <div className="flex justify-center gap-2 sm:gap-3 md:gap-4 w-2/3">
+                {packCards.slice(3, 5).map((card, index) => {
+                  const actualIndex = index + 3;
+                  return (
+                    <motion.div
+                      key={`${card.id}-${actualIndex}`}
+                      initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ delay: actualIndex * 0.1, duration: 0.4, type: "spring" }}
+                      className="aspect-[5/7] relative cursor-pointer flex-1"
+                      onClick={() => toggleCard(actualIndex)}
                     >
-                      Tap
-                    </motion.span>
-                  )}
-                </motion.div>
-              ))}
+                      <PokemonCard
+                        card={card}
+                        imageSrc={getImagePath(card)}
+                        isFlipped={flippedIndices.has(actualIndex)}
+                        showBack={true}
+                      />
+                      {!flippedIndices.has(actualIndex) && (
+                        <motion.span 
+                          className="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-yellow-400 text-slate-900 text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-semibold"
+                          animate={{ scale: [1, 1.1, 1] }}
+                          transition={{ repeat: Infinity, duration: 1.5 }}
+                        >
+                          Tap
+                        </motion.span>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Action Buttons */}
