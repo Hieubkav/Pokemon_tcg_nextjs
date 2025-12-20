@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   title: "Pokemon TCG Pocket - Pack Opening Simulator",
   description: "Open Pokemon TCG Pocket packs with stunning holographic card effects",
   keywords: ["pokemon", "tcg", "pocket", "pack opening", "simulator", "cards"],
+  icons: {
+    icon: "/icon.webp",
+  },
 };
 
 export default function RootLayout({
