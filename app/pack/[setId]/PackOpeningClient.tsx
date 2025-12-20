@@ -103,6 +103,7 @@ export function PackOpeningClient({
   return (
     <PackOpening
       cards={cards}
+      setId={setId}
       setName={setName}
       packImage={currentPackImage}
       getImagePath={getImagePath}
