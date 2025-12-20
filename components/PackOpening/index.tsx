@@ -94,7 +94,8 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
   const MULTI_PACK_COUNT = 10;
   
   const { playPackOpen, playCardFlip, playRarityReveal, playMultiPackStart, playMultiPackComplete, isMuted, toggleMute } = useSounds();
-  const { addCards } = useCollection();
+  const { addCards, hasCard } = useCollection();
+  const [newCardIds, setNewCardIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     preloadImage("/images/card-back.webp");
@@ -140,12 +141,16 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
 
     const newPack = openPackClient(cards, packSize, booster, setId);
     newPack.forEach(card => preloadImage(getImagePath(card)));
+    
+    // Track which cards are new (not in collection yet)
+    const newIds = new Set(newPack.filter(card => !hasCard(card.id)).map(card => card.id));
+    setNewCardIds(newIds);
 
     setTimeout(() => {
       setPackCards(newPack);
       setGameState("revealing");
     }, 1600);
-  }, [cards, packSize, playPackOpen, getImagePath, booster, setId]);
+  }, [cards, packSize, playPackOpen, getImagePath, booster, setId, hasCard]);
 
   const toggleCard = useCallback((index: number) => {
     const card = packCards[index];
@@ -201,6 +206,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
     cardsAddedRef.current = false;
     setMultiPacks([]);
     setCurrentMultiIndex(0);
+    setNewCardIds(new Set());
   }, []);
 
   // Multi-pack auto functions
@@ -209,12 +215,23 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
     
     // Generate all packs upfront
     const packs: MultiPackData[] = [];
+    const collectedIds = new Set<string>();
+    const newIds = new Set<string>();
+    
     for (let i = 0; i < MULTI_PACK_COUNT; i++) {
       const newPack = openPackClient(cards, packSize, booster, setId);
-      newPack.forEach(card => preloadImage(getImagePath(card)));
+      newPack.forEach(card => {
+        preloadImage(getImagePath(card));
+        // Track new cards (not in collection AND not already seen in this batch)
+        if (!hasCard(card.id) && !collectedIds.has(card.id)) {
+          newIds.add(card.id);
+        }
+        collectedIds.add(card.id);
+      });
       packs.push({ cards: newPack });
     }
     
+    setNewCardIds(newIds);
     setMultiPacks(packs);
     setCurrentMultiIndex(0);
     
@@ -224,7 +241,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
     
     // Start opening first pack
     setGameState("multi-opening");
-  }, [cards, packSize, booster, setId, getImagePath, playMultiPackStart, addCards]);
+  }, [cards, packSize, booster, setId, getImagePath, playMultiPackStart, addCards, hasCard]);
 
   // Auto reveal current multi-pack cards
   const autoRevealMultiPack = useCallback(() => {
@@ -307,6 +324,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
         <div className="flex justify-center w-full max-w-[180px]">
           {cardList.map((card, index) => {
             const isFlipped = flippedIndices.has(index);
+            const isNew = newCardIds.has(card.id);
             return (
               <motion.div
                 key={`${card.id}-${index}`}
@@ -318,6 +336,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
               >
                 <PokemonCard card={card} imageSrc={getImagePath(card)} isFlipped={isFlipped} showBack={true} />
                 {!isFlipped && !isMulti && <TapHint />}
+                {isFlipped && isNew && <NewBadge />}
               </motion.div>
             );
           })}
@@ -330,6 +349,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 w-full max-w-md md:max-w-2xl">
           {cardList.map((card, index) => {
             const isFlipped = flippedIndices.has(index);
+            const isNew = newCardIds.has(card.id);
             return (
               <motion.div
                 key={`${card.id}-${index}`}
@@ -341,6 +361,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
               >
                 <PokemonCard card={card} imageSrc={getImagePath(card)} isFlipped={isFlipped} showBack={true} />
                 {!isFlipped && !isMulti && <TapHint />}
+                {isFlipped && isNew && <NewBadge />}
               </motion.div>
             );
           })}
@@ -353,6 +374,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
         <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full">
           {cardList.slice(0, 3).map((card, index) => {
             const isFlipped = flippedIndices.has(index);
+            const isNew = newCardIds.has(card.id);
             return (
               <motion.div
                 key={`${card.id}-${index}`}
@@ -364,6 +386,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
               >
                 <PokemonCard card={card} imageSrc={getImagePath(card)} isFlipped={isFlipped} showBack={true} />
                 {!isFlipped && !isMulti && <TapHint />}
+                {isFlipped && isNew && <NewBadge />}
               </motion.div>
             );
           })}
@@ -372,6 +395,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
           {cardList.slice(3, 5).map((card, index) => {
             const actualIndex = index + 3;
             const isFlipped = flippedIndices.has(actualIndex);
+            const isNew = newCardIds.has(card.id);
             return (
               <motion.div
                 key={`${card.id}-${actualIndex}`}
@@ -383,6 +407,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
               >
                 <PokemonCard card={card} imageSrc={getImagePath(card)} isFlipped={isFlipped} showBack={true} />
                 {!isFlipped && !isMulti && <TapHint />}
+                {isFlipped && isNew && <NewBadge />}
               </motion.div>
             );
           })}
@@ -543,10 +568,11 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
                     const isRare = GLOW_RARITIES.includes(card.rarity || "");
                     const isSuperRare = SUPER_RARE_RARITIES.includes(card.rarity || "");
                     const isLegendary = LEGENDARY_RARITIES.includes(card.rarity || "");
+                    const isNew = newCardIds.has(card.id);
                     return (
                       <motion.div
                         key={`${packIdx}-${cardIdx}-${card.id}`}
-                        className={`aspect-[5/7] rounded overflow-hidden ${
+                        className={`aspect-[5/7] rounded overflow-hidden relative ${
                           isLegendary ? "ring-2 ring-cyan-400" : 
                           isSuperRare ? "ring-2 ring-purple-400" : 
                           isRare ? "ring-1 ring-yellow-400" : ""
@@ -557,6 +583,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
                         whileHover={{ scale: 1.4, zIndex: 20 }}
                       >
                         <img src={getImagePath(card)} alt={card.name} className="w-full h-full object-cover" />
+                        {isNew && <span className="absolute top-0.5 left-0.5 bg-red-500 text-white text-[6px] px-1 py-px rounded font-bold">NEW</span>}
                       </motion.div>
                     );
                   })
@@ -588,6 +615,19 @@ function TapHint() {
       transition={{ repeat: Infinity, duration: 1.2 }}
     >
       Tap
+    </motion.span>
+  );
+}
+
+function NewBadge() {
+  return (
+    <motion.span 
+      className="absolute top-1 left-1 bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded font-bold shadow-lg z-10"
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 500, damping: 25, delay: 0.2 }}
+    >
+      NEW
     </motion.span>
   );
 }
