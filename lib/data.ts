@@ -129,16 +129,25 @@ function getRarityFromId(localId: string, setId: string): Card["rarity"] {
     return "crown";
   }
   
-  // Space-Time Smackdown (A2) - 163 cards
+  // Space-Time Smackdown (A2) - 207 cards, official 140
+  // 001-096: Common, 097-120: Uncommon, 121-135: Rare
+  // 136-150: Double-rare (EX), 151-157: Art-rare, 158-162: Super-rare
+  // 163-179: Common/Uncommon extras
+  // 180-189: Double-rare (EX), 190-195: Art-rare (Supporters)
+  // 196-205: Super-rare (Full art EX), 206-207: Crown
   if (setId === "A2") {
+    if (num >= 206) return "crown";
+    if (num >= 196 && num <= 205) return "super-rare";
+    if (num >= 190 && num <= 195) return "art-rare";
+    if (num >= 180 && num <= 189) return "double-rare";
+    if (num >= 163 && num <= 179) return "common";
     if (num <= 96) return "common";
     if (num <= 120) return "uncommon";
     if (num <= 135) return "rare";
     if (num <= 150) return "double-rare";
     if (num <= 157) return "art-rare";
-    if (num <= 161) return "super-rare";
-    if (num <= 162) return "immersive";
-    return "crown";
+    if (num <= 162) return "super-rare";
+    return "common";
   }
   
   // Triumphant Light (A2a) - 96 cards
@@ -167,8 +176,22 @@ function getRarityFromId(localId: string, setId: string): Card["rarity"] {
     return "crown";
   }
   
-  // Celestial Guardians (A3) - similar structure
+  // Celestial Guardians (A3) - 239 cards, official 155
+  // 001-100: Common, 101-125: Uncommon, 126-140: Rare
+  // 141-155: Double-rare (EX), 156-165: Art-rare, 166-172: Super-rare, 173-174: Immersive
+  // 175-179: Common extras
+  // 180-189: Double-rare (EX), 190-197: Art-rare (Supporters)
+  // 198-209: Super-rare (Full art EX)
+  // 210-229: Art-rare (Shiny pokemon)
+  // 230-237: Super-rare (Shiny EX), 238-239: Crown
   if (setId === "A3") {
+    if (num >= 238) return "crown";
+    if (num >= 230 && num <= 237) return "super-rare";
+    if (num >= 210 && num <= 229) return "art-rare";
+    if (num >= 198 && num <= 209) return "super-rare";
+    if (num >= 190 && num <= 197) return "art-rare";
+    if (num >= 180 && num <= 189) return "double-rare";
+    if (num >= 175 && num <= 179) return "common";
     if (num <= 100) return "common";
     if (num <= 125) return "uncommon";
     if (num <= 140) return "rare";
@@ -176,7 +199,7 @@ function getRarityFromId(localId: string, setId: string): Card["rarity"] {
     if (num <= 165) return "art-rare";
     if (num <= 172) return "super-rare";
     if (num <= 174) return "immersive";
-    return "crown";
+    return "common";
   }
   
   // Wisdom of Sea and Sky (A4) - 241 cards, official 161
