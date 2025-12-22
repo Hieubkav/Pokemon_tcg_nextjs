@@ -1,89 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { useCollection } from "@/lib/collection";
-import { AchievementsPopup } from "./AchievementsPopup";
-import { PokedexView } from "./PokedexView";
-import { BookOpen, Trophy, RotateCcw, Sparkles, FolderOpen } from "lucide-react";
+import { useLocale } from "@/lib/locale";
+import { RotateCcw, Sparkles, FolderOpen } from "lucide-react";
 
-interface SetData {
-  id: string;
-  name: string;
-  cards: { id: string; localId: string; name: string; image: string; boosters?: string[] }[];
-  boosters?: { id: string; name: string }[];
-}
-
-interface GameUIProps {
-  sets: SetData[];
-}
-
-export function GameUI({ sets }: GameUIProps) {
-  const [showAchievements, setShowAchievements] = useState(false);
-  const [showPokedex, setShowPokedex] = useState(false);
+export function GameUI() {
   const { reset, getUniqueCount, getTotalOpened } = useCollection();
+  const { t } = useLocale();
 
   return (
     <>
-      {/* Action Buttons */}
-      <div className="fixed top-4 right-4 z-40 flex gap-1.5">
-        <Link
-          href="/wonder-pick"
-          className="p-2.5 rounded-md bg-gray-800 text-yellow-400 hover:text-yellow-300 hover:bg-gray-700 transition-colors"
-          title="Wonder Pick"
-        >
-          <Sparkles className="w-5 h-5" />
-        </Link>
-        
-        <button
-          onClick={() => setShowPokedex(true)}
-          className="p-2.5 rounded-md bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
-          title="Pokédex"
-        >
-          <BookOpen className="w-5 h-5" />
-        </button>
-        
-        <button
-          onClick={() => setShowAchievements(true)}
-          className="p-2.5 rounded-md bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
-          title="Achievements"
-        >
-          <Trophy className="w-5 h-5" />
-        </button>
-        
+      {/* Reset Button - Desktop (next to language switcher) */}
+      <div className="fixed top-4 right-20 z-40 hidden md:flex gap-1.5">
         <button
           onClick={reset}
           className="p-2.5 rounded-md bg-gray-800 text-gray-300 hover:text-red-400 hover:bg-gray-700 transition-colors"
-          title="Reset"
+          title={t("common.reset")}
         >
           <RotateCcw className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Stats */}
-      <div className="fixed bottom-4 left-4 z-40 flex gap-3 text-xs text-gray-500">
+      {/* Stats - Desktop */}
+      <div className="hidden md:flex fixed bottom-4 left-4 z-40 gap-3 text-xs text-gray-500">
         <span className="flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5" />
-          {getUniqueCount()} loại
+          {getUniqueCount()} {t("stats.types")}
         </span>
         <span className="flex items-center gap-1.5">
           <FolderOpen className="w-3.5 h-3.5" />
-          {getTotalOpened()} đã mở
+          {getTotalOpened()} {t("stats.opened")}
         </span>
       </div>
-
-      {/* Popups */}
-      <AchievementsPopup
-        isOpen={showAchievements}
-        onClose={() => setShowAchievements(false)}
-        sets={sets}
-      />
-
-      <PokedexView
-        isOpen={showPokedex}
-        onClose={() => setShowPokedex(false)}
-        sets={sets}
-      />
     </>
   );
 }

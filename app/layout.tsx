@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { CollectionProvider } from "@/lib/collection";
+import { LocaleProvider } from "@/lib/locale";
+import { NavWrapper } from "@/components/NavWrapper";
+import { getAllSets, getLocalImagePath } from "@/lib/data";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,19 +26,37 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const sets = await getAllSets();
+  
+  const setsForNav = sets.map((set) => ({
+    id: set.id,
+    name: set.name,
+    cards: set.cards.map((card) => ({
+      id: card.id,
+      localId: card.localId,
+      name: card.name,
+      image: getLocalImagePath(set.id, card),
+      boosters: card.boosters,
+    })),
+    boosters: set.boosters,
+  }));
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
-        <CollectionProvider>
-          {children}
-        </CollectionProvider>
+        <LocaleProvider>
+          <CollectionProvider>
+            {children}
+            <NavWrapper sets={setsForNav} />
+          </CollectionProvider>
+        </LocaleProvider>
         <Analytics />
       </body>
     </html>

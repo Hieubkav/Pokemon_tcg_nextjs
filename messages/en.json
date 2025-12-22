@@ -1,0 +1,50 @@
+{
+  "common": {
+    "home": "Home",
+    "wonderPick": "Wonder Pick",
+    "pokedex": "Pokédex",
+    "achievements": "Achievements",
+    "reset": "Reset",
+    "close": "Close",
+    "back": "Back"
+  },
+  "home": {
+    "title": "Pokemon TCG Pocket",
+    "subtitle": "Open packs and collect cards",
+    "selectSet": "Select Set",
+    "sets": "sets",
+    "cards": "cards",
+    "packs": "packs",
+    "pack": "pack",
+    "footer": "Created by Tran Manh Hieu"
+  },
+  "stats": {
+    "types": "types",
+    "opened": "opened"
+  },
+  "pokedex": {
+    "title": "Pokédex",
+    "collected": "Collected",
+    "notCollected": "Not Collected",
+    "all": "All",
+    "searchPlaceholder": "Search cards..."
+  },
+  "achievements": {
+    "title": "Achievements",
+    "collected": "collected",
+    "progress": "Progress"
+  },
+  "wonderPick": {
+    "title": "Wonder Pick",
+    "subtitle": "Pick a card from the selection",
+    "pickCard": "Pick a Card",
+    "yourPick": "Your Pick",
+    "tryAgain": "Try Again"
+  },
+  "pack": {
+    "openPack": "Open Pack",
+    "selectBooster": "Select Booster",
+    "tapToReveal": "Tap to reveal",
+    "newCard": "NEW"
+  }
+}

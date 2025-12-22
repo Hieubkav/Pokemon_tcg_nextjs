@@ -1,0 +1,50 @@
+{
+  "common": {
+    "home": "Trang chủ",
+    "wonderPick": "Wonder Pick",
+    "pokedex": "Pokédex",
+    "achievements": "Thành tích",
+    "reset": "Đặt lại",
+    "close": "Đóng",
+    "back": "Quay lại"
+  },
+  "home": {
+    "title": "Pokemon TCG Pocket",
+    "subtitle": "Mở pack và thu thập thẻ bài",
+    "selectSet": "Chọn Set",
+    "sets": "bộ",
+    "cards": "thẻ",
+    "packs": "gói",
+    "pack": "gói",
+    "footer": "Tạo bởi Trần Mạnh Hiếu"
+  },
+  "stats": {
+    "types": "loại",
+    "opened": "đã mở"
+  },
+  "pokedex": {
+    "title": "Pokédex",
+    "collected": "Đã sưu tầm",
+    "notCollected": "Chưa có",
+    "all": "Tất cả",
+    "searchPlaceholder": "Tìm kiếm thẻ..."
+  },
+  "achievements": {
+    "title": "Thành tích",
+    "collected": "đã thu thập",
+    "progress": "Tiến độ"
+  },
+  "wonderPick": {
+    "title": "Wonder Pick",
+    "subtitle": "Chọn một thẻ từ bộ sưu tập",
+    "pickCard": "Chọn thẻ",
+    "yourPick": "Thẻ của bạn",
+    "tryAgain": "Thử lại"
+  },
+  "pack": {
+    "openPack": "Mở Pack",
+    "selectBooster": "Chọn Booster",
+    "tapToReveal": "Chạm để lật",
+    "newCard": "MỚI"
+  }
+}
