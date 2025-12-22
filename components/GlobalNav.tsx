@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Sparkles, BookOpen, Trophy, Globe } from "lucide-react";
+import { Home, Sparkles, BookOpen, Trophy, RotateCcw, FolderOpen } from "lucide-react";
 import { useLocale } from "@/lib/locale";
+import { useCollection } from "@/lib/collection";
 import { AchievementsPopup } from "./AchievementsPopup";
 import { PokedexView } from "./PokedexView";
 
@@ -23,54 +24,82 @@ export function GlobalNav({ sets }: GlobalNavProps) {
   const [showAchievements, setShowAchievements] = useState(false);
   const [showPokedex, setShowPokedex] = useState(false);
   const pathname = usePathname();
-  const { locale, setLocale, t } = useLocale();
+  const { t } = useLocale();
+  const { reset, getUniqueCount, getTotalOpened } = useCollection();
 
   const isHome = pathname === "/";
   const isWonderPick = pathname.startsWith("/wonder-pick");
 
-  const toggleLocale = () => {
-    setLocale(locale === "en" ? "vi" : "en");
-  };
-
   return (
     <>
-      {/* Desktop Navigation - Top Right */}
-      <div className="fixed top-4 right-4 z-40 flex gap-1.5">
-        <button
-          onClick={toggleLocale}
-          className="p-2.5 rounded-md bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors flex items-center gap-1.5"
-          title={locale === "en" ? "Switch to Vietnamese" : "Chuyển sang Tiếng Anh"}
-        >
-          <Globe className="w-5 h-5" />
-          <span className="text-xs font-medium uppercase">{locale}</span>
-        </button>
+      {/* Desktop Header */}
+      <header className="hidden md:flex fixed top-0 left-0 right-0 z-40 h-14 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800">
+        <div className="flex items-center justify-between w-full max-w-7xl mx-auto px-4">
+          {/* Left - Logo/Home */}
+          <Link
+            href="/"
+            className={`flex items-center gap-2 font-semibold transition-colors ${
+              isHome ? "text-white" : "text-gray-300 hover:text-white"
+            }`}
+          >
+            <Home className="w-5 h-5" />
+            <span>Pokemon TCG Pocket</span>
+          </Link>
 
-        <Link
-          href="/wonder-pick"
-          className={`hidden md:flex p-2.5 rounded-md bg-gray-800 hover:bg-gray-700 transition-colors ${
-            isWonderPick ? "text-yellow-400" : "text-gray-300 hover:text-yellow-300"
-          }`}
-          title={t("common.wonderPick")}
-        >
-          <Sparkles className="w-5 h-5" />
-        </Link>
+          {/* Center - Stats */}
+          <div className="flex items-center gap-4 text-sm text-gray-400">
+            <span className="flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4" />
+              {getUniqueCount()} {t("stats.types")}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <FolderOpen className="w-4 h-4" />
+              {getTotalOpened()} {t("stats.opened")}
+            </span>
+          </div>
 
-        <button
-          onClick={() => setShowPokedex(true)}
-          className="hidden md:flex p-2.5 rounded-md bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
-          title={t("common.pokedex")}
-        >
-          <BookOpen className="w-5 h-5" />
-        </button>
+          {/* Right - Navigation */}
+          <div className="flex items-center gap-1">
+            <Link
+              href="/wonder-pick"
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-md transition-colors ${
+                isWonderPick
+                  ? "text-yellow-400 bg-yellow-400/10"
+                  : "text-gray-300 hover:text-yellow-300 hover:bg-gray-800"
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm">{t("common.wonderPick")}</span>
+            </Link>
 
-        <button
-          onClick={() => setShowAchievements(true)}
-          className="hidden md:flex p-2.5 rounded-md bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
-          title={t("common.achievements")}
-        >
-          <Trophy className="w-5 h-5" />
-        </button>
-      </div>
+            <button
+              onClick={() => setShowPokedex(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span className="text-sm">{t("common.pokedex")}</span>
+            </button>
+
+            <button
+              onClick={() => setShowAchievements(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+            >
+              <Trophy className="w-4 h-4" />
+              <span className="text-sm">{t("common.achievements")}</span>
+            </button>
+
+            <div className="w-px h-6 bg-gray-700 mx-1" />
+
+            <button
+              onClick={reset}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-md text-gray-300 hover:text-red-400 hover:bg-gray-800 transition-colors"
+              title={t("common.reset")}
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </header>
 
       {/* Bottom Navigation - Mobile Only */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-gray-900/95 backdrop-blur-sm border-t border-gray-800">

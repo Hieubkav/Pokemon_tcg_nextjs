@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useSyncExternalStore, ReactNode } from "react";
+import { createContext, useContext, useSyncExternalStore, ReactNode } from "react";
 import en from "@/messages/en.json";
 import vi from "@/messages/vi.json";
 
@@ -9,7 +9,6 @@ type Messages = typeof en;
 
 interface LocaleContextType {
   locale: Locale;
-  setLocale: (locale: Locale) => void;
   t: (key: string) => string;
 }
 
@@ -17,25 +16,30 @@ const messages: Record<Locale, Messages> = { en, vi };
 
 const LocaleContext = createContext<LocaleContextType | null>(null);
 
-function getStoredLocale(): Locale {
-  if (typeof window === "undefined") return "vi";
-  const saved = localStorage.getItem("locale") as Locale;
-  return saved === "en" || saved === "vi" ? saved : "vi";
+function detectLocale(): Locale {
+  if (typeof window === "undefined") return "en";
+  
+  // Check timezone (Vietnam = Asia/Ho_Chi_Minh or Asia/Saigon)
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (timezone === "Asia/Ho_Chi_Minh" || timezone === "Asia/Saigon") {
+    return "vi";
+  }
+  
+  // Check browser language
+  const browserLang = navigator.language || (navigator as { userLanguage?: string }).userLanguage || "";
+  if (browserLang.startsWith("vi")) {
+    return "vi";
+  }
+  
+  return "en";
 }
 
-function subscribeToStorage(callback: () => void) {
-  window.addEventListener("storage", callback);
-  return () => window.removeEventListener("storage", callback);
+function subscribe() {
+  return () => {};
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const storedLocale = useSyncExternalStore(subscribeToStorage, getStoredLocale, () => "vi" as Locale);
-  const [locale, setLocaleState] = useState<Locale>(storedLocale);
-
-  const setLocale = (newLocale: Locale) => {
-    setLocaleState(newLocale);
-    localStorage.setItem("locale", newLocale);
-  };
+  const locale = useSyncExternalStore(subscribe, detectLocale, () => "en" as Locale);
 
   const t = (key: string): string => {
     const keys = key.split(".");
@@ -51,7 +55,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <LocaleContext.Provider value={{ locale, setLocale, t }}>
+    <LocaleContext.Provider value={{ locale, t }}>
       {children}
     </LocaleContext.Provider>
   );

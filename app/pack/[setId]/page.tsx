@@ -28,7 +28,7 @@ export default async function PackPage({ params }: PageProps) {
   }
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen md:pt-14">
       <nav className="p-4 flex items-center gap-4">
         <Link
           href="/"

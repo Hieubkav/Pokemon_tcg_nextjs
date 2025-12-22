@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { getAllSets, getLocalLogoPath } from "@/lib/data";
-import { ArrowLeft } from "lucide-react";
 import { WonderPickContent } from "@/components/WonderPickContent";
 
 export default async function WonderPickPage() {
@@ -25,14 +23,7 @@ export default async function WonderPickPage() {
   });
 
   return (
-    <main className="min-h-screen px-4 py-8 pb-24 md:px-8">
-      <Link
-        href="/"
-        className="fixed top-4 left-4 z-40 p-2.5 rounded-md bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
-      >
-        <ArrowLeft className="w-5 h-5" />
-      </Link>
-
+    <main className="min-h-screen px-4 py-8 pb-24 md:px-8 md:pt-20">
       <WonderPickContent sets={setsForContent} logoMap={logoMap} />
     </main>
   );

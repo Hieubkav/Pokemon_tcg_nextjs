@@ -1,5 +1,4 @@
 import { getAllSets, getLocalLogoPath } from "@/lib/data";
-import { GameUI } from "@/components/GameUI";
 import { HomeContent } from "@/components/HomeContent";
 
 export default async function HomePage() {
@@ -22,8 +21,7 @@ export default async function HomePage() {
   });
 
   return (
-    <main className="min-h-screen px-4 py-8 pb-24 md:px-8">
-      <GameUI />
+    <main className="min-h-screen px-4 py-8 pb-24 md:px-8 md:pt-20">
       <HomeContent sets={setsForHome} logoMap={logoMap} />
     </main>
   );

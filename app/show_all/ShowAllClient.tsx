@@ -31,7 +31,7 @@ export function ShowAllClient({ sets }: ShowAllClientProps) {
   const errorCount = currentSet?.cards.filter((c) => errorCards.has(c.id)).length || 0;
 
   return (
-    <main className="min-h-screen p-4">
+    <main className="min-h-screen p-4 pb-24 md:pt-18">
       <div className="flex items-baseline gap-4 mb-4">
         <h1 className="text-xl font-bold text-white">Debug View</h1>
         {errorCount > 0 && (
