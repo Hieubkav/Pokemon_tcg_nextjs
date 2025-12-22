@@ -311,6 +311,73 @@ export function useSounds() {
     setTimeout(() => playTone(2093, 0.5, "sine", 0.15), 650);
   }, [playTone]);
 
+  // Wonder Pick sounds
+  const playWonderPickIntro = useCallback(() => {
+    // Mystical intro sound
+    playTone(330, 0.3, "sine", 0.2);
+    setTimeout(() => playTone(392, 0.3, "sine", 0.18), 100);
+    setTimeout(() => playTone(440, 0.35, "sine", 0.2), 200);
+    setTimeout(() => {
+      playTone(523, 0.4, "sine", 0.22);
+      playTone(659, 0.4, "sine", 0.18);
+    }, 350);
+  }, [playTone]);
+
+  const playWonderPickShuffle = useCallback(() => {
+    // Card shuffle whoosh
+    playNoise(0.15, 0.12);
+    playTone(200, 0.1, "triangle", 0.15);
+    setTimeout(() => playTone(350, 0.1, "triangle", 0.12), 50);
+  }, [playTone, playNoise]);
+
+  const playWonderPickSuspense = useCallback(() => {
+    // Suspenseful heartbeat-like sound
+    const beatInterval = 400;
+    for (let i = 0; i < 4; i++) {
+      setTimeout(() => {
+        playTone(80 + i * 10, 0.15, "sine", 0.25 - i * 0.03);
+        setTimeout(() => playTone(60 + i * 10, 0.1, "sine", 0.15), 100);
+      }, i * beatInterval);
+    }
+    // Rising tension
+    setTimeout(() => {
+      playTone(200, 0.2, "sine", 0.15);
+      playTone(250, 0.2, "sine", 0.12);
+    }, 1600);
+    setTimeout(() => {
+      playTone(280, 0.2, "sine", 0.18);
+      playTone(350, 0.2, "sine", 0.15);
+    }, 1900);
+  }, [playTone]);
+
+  const playWonderPickRevealOther = useCallback(() => {
+    // Quick reveal for non-selected cards
+    playNoise(0.05, 0.08);
+    playTone(300, 0.08, "triangle", 0.12);
+  }, [playTone, playNoise]);
+
+  const playWonderPickWin = useCallback(() => {
+    // Exciting win sound for NEW card
+    playNoise(0.1, 0.1);
+    playTone(523, 0.15, "sine", 0.25);
+    setTimeout(() => playTone(659, 0.15, "sine", 0.24), 80);
+    setTimeout(() => playTone(784, 0.15, "sine", 0.23), 160);
+    setTimeout(() => {
+      playTone(1047, 0.3, "sine", 0.28);
+      playTone(784, 0.3, "sine", 0.22);
+    }, 240);
+    setTimeout(() => playTone(1319, 0.4, "sine", 0.2), 400);
+    setTimeout(() => playTone(1568, 0.35, "sine", 0.15), 500);
+  }, [playTone, playNoise]);
+
+  const playWonderPickMiss = useCallback(() => {
+    // Disappointed sound for owned card
+    playTone(400, 0.15, "sine", 0.2);
+    setTimeout(() => playTone(350, 0.15, "sine", 0.18), 100);
+    setTimeout(() => playTone(300, 0.2, "sine", 0.15), 200);
+    setTimeout(() => playTone(250, 0.25, "triangle", 0.12), 300);
+  }, [playTone]);
+
   const toggleMute = useCallback(() => {
     setIsMuted(prev => !prev);
   }, []);
@@ -324,6 +391,12 @@ export function useSounds() {
     playMultiPackStart,
     playPackTransition,
     playMultiPackComplete,
+    playWonderPickIntro,
+    playWonderPickShuffle,
+    playWonderPickSuspense,
+    playWonderPickRevealOther,
+    playWonderPickWin,
+    playWonderPickMiss,
     isMuted,
     toggleMute,
   };

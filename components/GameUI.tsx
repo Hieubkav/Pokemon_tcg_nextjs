@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useCollection } from "@/lib/collection";
 import { AchievementsPopup } from "./AchievementsPopup";
 import { PokedexView } from "./PokedexView";
@@ -26,6 +27,14 @@ export function GameUI({ sets }: GameUIProps) {
     <>
       {/* Action Buttons */}
       <div className="fixed top-4 right-4 z-40 flex gap-1.5">
+        <Link
+          href="/wonder-pick"
+          className="p-2.5 rounded-md bg-gray-800 text-yellow-400 hover:text-yellow-300 hover:bg-gray-700 transition-colors"
+          title="Wonder Pick"
+        >
+          <Sparkles className="w-5 h-5" />
+        </Link>
+        
         <button
           onClick={() => setShowPokedex(true)}
           className="p-2.5 rounded-md bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
