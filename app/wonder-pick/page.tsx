@@ -1,5 +1,29 @@
+import type { Metadata } from "next";
 import { getAllSets, getLocalLogoPath } from "@/lib/data";
 import { WonderPickContent } from "@/components/WonderPickContent";
+
+export const metadata: Metadata = {
+  title: "Wonder Pick Simulator",
+  description:
+    "Play Wonder Pick game from Pokemon TCG Pocket! Pick cards from mystery selection. Free Wonder Pick simulator with all expansions - Genetic Apex, Mega Rising, Celestial Guardians & more.",
+  keywords: [
+    "Wonder Pick",
+    "Pokemon TCG Pocket Wonder Pick",
+    "PTCGP Wonder Pick",
+    "Wonder Pick simulator",
+    "Pokemon Pocket mini game",
+    "Wonder Pick free",
+    "Pokemon card picking game",
+    "PTCGP card game",
+    "Wonder Pick online",
+  ],
+  openGraph: {
+    title: "Wonder Pick Simulator - Pokemon TCG Pocket",
+    description:
+      "Play the Wonder Pick mini game from Pokemon TCG Pocket! Pick mystery cards from all expansions.",
+    type: "website",
+  },
+};
 
 export default async function WonderPickPage() {
   const sets = await getAllSets();
