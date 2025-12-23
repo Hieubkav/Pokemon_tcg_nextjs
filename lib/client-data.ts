@@ -25,14 +25,17 @@ const SLOT5_RATES = {
   uncommon: 1.0,     // 80% - Uncommon (remaining)
 };
 
-// Deluxe Pack ex (A4B) - 4 cards, guaranteed 1 EX (4◇+) at slot 4
-// Source: Game8, Serebii - guaranteed EX but still rare for higher
-const DELUXE_SLOT4_RATES = {
-  crown: 0.001,      // 0.1% - Crown very rare even in deluxe
-  immersive: 0.005,  // 0.4% - Immersive
-  superRare: 0.02,   // 1.5% - Super rare
-  artRare: 0.08,     // 6% - Art rare
-  doubleRare: 1.0,   // 92% - guaranteed EX minimum
+// Deluxe Pack ex (A4B) - Based on Serebii official data
+// Slot 4: ONLY 4-diamond EX cards (0.75% each, ~91 EX cards = 100% total)
+// Secret rares (stars, crown) appear in Slot 3, NOT Slot 4
+
+// Slot 3 rates for secret rare cards (from Serebii)
+const DELUXE_SLOT3_RATES = {
+  crown: 0.00198,    // 0.198% - Crown (Rare Candy)
+  immersive: 0.01111, // 1.111% - 3-star (Pikachu ex)
+  superRare: 0.03,   // ~2% - 2-star cards (0.156% each, ~13 cards)
+  shiny: 0.047,      // ~1.7% - Shiny 2-star (0.8335% each)
+  rare: 1.0,         // Rest - 3-diamond and below
 };
 
 // God pack chance: 0.05% (1 in 2000 packs)
@@ -162,7 +165,11 @@ export function openPackClient(
 }
 
 // Special function for Deluxe Pack ex (A4B)
-// 4 cards total: 3 common/uncommon + 1 guaranteed EX (4◇) or higher
+// Based on Serebii official data:
+// - Slot 1: Only 1◇ (common) cards
+// - Slot 2: 1◇ and 2◇ (common/uncommon) cards  
+// - Slot 3: 1◇, 2◇, 3◇ cards + SECRET RARE chance (☆, ☆☆, ☆☆☆, Crown)
+// - Slot 4: ONLY 4◇ EX cards (GUARANTEED)
 function openDeluxePack(
   commonCards: Card[],
   uncommonCards: Card[],
@@ -176,74 +183,84 @@ function openDeluxePack(
 ): Card[] {
   const pack: Card[] = [];
   
-  // All EX+ cards for god pack and slot 4
-  const exOrBetterCards = [
-    ...doubleRareCards,
+  // All rare+ cards for god pack
+  const rareOrBetterCards = [
     ...artRareCards,
     ...superRareCards,
     ...immersiveCards,
     ...crownCards,
   ];
 
-  // God pack check for Deluxe (all EX+)
-  if (Math.random() < GOD_PACK_CHANCE && exOrBetterCards.length >= packSize) {
+  // God pack check for Deluxe (all secret rare)
+  if (Math.random() < GOD_PACK_CHANCE && rareOrBetterCards.length >= packSize) {
     for (let i = 0; i < packSize; i++) {
-      const card = pickRandom(exOrBetterCards);
+      const card = pickRandom(rareOrBetterCards);
       if (card) pack.push(card);
     }
     return pack;
   }
 
-  // Slot 1-2: Common cards
-  for (let i = 0; i < 2; i++) {
-    const card = pickRandom(commonCards);
-    if (card) pack.push(card);
-  }
+  // Slot 1: Only 1◇ (common) - 100% common
+  const slot1Card = pickRandom(commonCards) || pickRandom(uncommonCards);
+  if (slot1Card) pack.push(slot1Card);
   
-  // Slot 3: Uncommon (80%) or Rare (20%)
+  // Slot 2: 1◇ (10%) or 2◇ (90%) - mostly uncommon
+  const roll2 = Math.random();
+  let slot2Card: Card | undefined;
+  if (roll2 < 0.10) {
+    slot2Card = pickRandom(commonCards);
+  } else {
+    slot2Card = pickRandom(uncommonCards);
+  }
+  if (!slot2Card) slot2Card = pickRandom(commonCards) || pickRandom(uncommonCards);
+  if (slot2Card) pack.push(slot2Card);
+  
+  // Slot 3: Variable - can have SECRET RARE cards!
+  // Based on Serebii: Crown 0.198%, 3-star 1.111%, 2-star ~2%, rest is 3◇ or below
   const roll3 = Math.random();
   let slot3Card: Card | undefined;
-  if (roll3 < 0.8) {
-    slot3Card = pickRandom(uncommonCards);
+  
+  if (roll3 < DELUXE_SLOT3_RATES.crown) {
+    slot3Card = pickRandom(crownCards);
+  } else if (roll3 < DELUXE_SLOT3_RATES.immersive) {
+    slot3Card = pickRandom(immersiveCards);
+  } else if (roll3 < DELUXE_SLOT3_RATES.superRare) {
+    slot3Card = pickRandom(superRareCards);
+  } else if (roll3 < DELUXE_SLOT3_RATES.shiny) {
+    slot3Card = pickRandom(artRareCards); // art-rare includes shiny 1-star
   } else {
-    slot3Card = pickRandom(rareCards);
+    // Regular 3◇, 2◇, or 1◇ cards
+    const subRoll = Math.random();
+    if (subRoll < 0.40) {
+      slot3Card = pickRandom(rareCards); // 3◇
+    } else if (subRoll < 0.80) {
+      slot3Card = pickRandom(uncommonCards); // 2◇
+    } else {
+      slot3Card = pickRandom(commonCards); // 1◇
+    }
   }
-  if (!slot3Card) slot3Card = pickRandom(uncommonCards) || pickRandom(commonCards);
+  if (!slot3Card) slot3Card = pickRandom(rareCards) || pickRandom(uncommonCards) || pickRandom(commonCards);
   if (slot3Card) pack.push(slot3Card);
-  
-  // Slot 4: Guaranteed EX (4◇) or higher
-  const roll4 = Math.random();
-  let slot4Card: Card | undefined;
-  
-  if (roll4 < DELUXE_SLOT4_RATES.crown) {
-    slot4Card = pickRandom(crownCards);
-  } else if (roll4 < DELUXE_SLOT4_RATES.immersive) {
-    slot4Card = pickRandom(immersiveCards);
-  } else if (roll4 < DELUXE_SLOT4_RATES.superRare) {
-    slot4Card = pickRandom(superRareCards);
-  } else if (roll4 < DELUXE_SLOT4_RATES.artRare) {
-    slot4Card = pickRandom(artRareCards);
-  } else {
-    slot4Card = pickRandom(doubleRareCards);
-  }
-  
-  // Fallback for slot 4 - must be EX or higher
-  if (!slot4Card) {
-    slot4Card = pickRandom(doubleRareCards) ||
-                pickRandom(artRareCards) ||
-                pickRandom(superRareCards) ||
-                pickRandom(rareCards); // Last resort
-  }
-  if (slot4Card) pack.push(slot4Card);
 
-  // Fill if needed
-  while (pack.length < packSize) {
-    const fallbackCard = pickRandom(uncommonCards) || pickRandom(commonCards);
+  // Fill slots 1-3 if needed (ensure we have 3 cards before adding EX)
+  while (pack.length < 3) {
+    const fallbackCard = pickRandom(commonCards) || pickRandom(uncommonCards);
     if (fallbackCard) {
       pack.push(fallbackCard);
     } else {
       break;
     }
+  }
+  
+  // Slot 4 (LAST): GUARANTEED 4◇ EX card - ONLY EX cards here!
+  // All EX cards have equal chance (0.75% each from ~91 EX cards)
+  const slot4Card = pickRandom(doubleRareCards);
+  if (slot4Card) {
+    pack.push(slot4Card);
+  } else {
+    // Fallback if no EX cards available (shouldn't happen)
+    const fallback = pickRandom(rareCards) || pickRandom(uncommonCards);
+    if (fallback) pack.push(fallback);
   }
 
   return pack.slice(0, packSize);

@@ -226,16 +226,10 @@ function getRarityFromId(localId: string, setId: string): Card["rarity"] {
     return "crown";
   }
   
-  // Deluxe Pack ex (A4B) - reprints with guaranteed EX
-  // Most cards are double-rare or higher
+  // Deluxe Pack ex (A4B) - reprints with EX cards scattered throughout
+  // Rarity is determined by card name in getSet function, not by ID
   if (setId === "A4B") {
-    if (num <= 200) return "common";
-    if (num <= 280) return "uncommon";
-    if (num <= 320) return "rare";
-    if (num <= 353) return "double-rare";
-    if (num <= 365) return "art-rare";
-    if (num <= 375) return "super-rare";
-    return "crown";
+    return undefined as unknown as Card["rarity"];
   }
   
   // Mega Rising (B1) - 331 cards, official 226
@@ -321,6 +315,52 @@ function getRarityFromB1Data(localId: string): Card["rarity"] {
   return "common";
 }
 
+// Detect rarity for A4B (Deluxe Pack ex) based on Serebii data
+// Cards 354-379 are secret rares that appear in Slot 3
+function getRarityFromA4B(localId: string, name: string): Card["rarity"] {
+  const num = parseInt(localId, 10);
+  
+  // Secret rare cards (354-379) - appear in Slot 3
+  if (num === 379) return "crown";           // Crown Rare Candy
+  if (num === 376) return "immersive";       // 3-star Pikachu ex
+  if (num >= 377 && num <= 378) return "super-rare"; // Shiny 2-star (Giratina, Darkrai)
+  if (num >= 354 && num <= 375) return "super-rare"; // 2-star cards
+  
+  // Regular cards (001-353)
+  const lowerName = name.toLowerCase();
+  
+  // EX cards (4◇) - appear ONLY in Slot 4
+  if (lowerName.includes(" ex")) return "double-rare";
+  
+  // 3◇ rare cards (evolved Pokemon without ex)
+  const rareNames = ["jumpluff", "serperior", "shaymin", "typhlosion", "feraligatr", 
+    "meganium", "arcanine", "ninetales", "gyarados", "starmie", "lapras", "vaporeon",
+    "jolteon", "flareon", "espeon", "umbreon", "leafeon", "glaceon", "sylveon",
+    "raichu", "electrode", "magnezone", "electivire", "luxray", "gengar", "alakazam",
+    "gardevoir", "gallade", "metagross", "aggron", "machamp", "golem", "rhyperior",
+    "mamoswine", "weavile", "honchkrow", "mismagius", "dusknoir", "chandelure",
+    "hydreigon", "dragonite", "salamence", "garchomp", "togekiss", "blissey"];
+  if (rareNames.some(r => lowerName.includes(r))) return "rare";
+  
+  // 2◇ uncommon (stage 1 and some trainers)
+  const uncommonPatterns = ["ivysaur", "charmeleon", "wartortle", "kakuna", "metapod",
+    "pidgeotto", "raticate", "fearow", "arbok", "pikachu", "sandslash", "nidorina",
+    "nidorino", "clefable", "wigglytuff", "golbat", "gloom", "parasect", "venomoth",
+    "dugtrio", "persian", "golduck", "primeape", "growlithe", "poliwhirl", "kadabra",
+    "machoke", "weepinbell", "tentacruel", "graveler", "ponyta", "slowbro", "magneton",
+    "dodrio", "dewgong", "muk", "cloyster", "haunter", "hypno", "kingler", "electrode",
+    "exeggutor", "marowak", "hitmon", "lickitung", "weezing", "rhydon", "chansey",
+    "tangela", "seadra", "seaking", "staryu", "mr. mime", "jynx", "electabuzz",
+    "magmar", "pinsir", "tauros", "magikarp", "ditto", "eevee", "porygon", "omanyte",
+    "kabuto", "aerodactyl", "snorlax", "professor", "potion", "ball", "switch",
+    "candy", "energy", "skiploom", "servine", "dartrix", "croconaw", "quilava",
+    "bayleef", "cherrim", "pheromosa"];
+  if (uncommonPatterns.some(p => lowerName.includes(p))) return "uncommon";
+  
+  // Default to 1◇ common (basic Pokemon)
+  return "common";
+}
+
 export async function getSet(setId: string): Promise<CardSet | null> {
   const setConfig = SET_FILES[setId];
   if (!setConfig) return null;
@@ -335,6 +375,11 @@ export async function getSet(setId: string): Promise<CardSet | null> {
       // For B1 base cards (001-226), use Limitless TCG rarity data
       if (!rarity && setId === "B1") {
         rarity = getRarityFromB1Data(card.localId);
+      }
+      
+      // For A4B, detect rarity from ID and card name (based on Serebii data)
+      if (!rarity && setId === "A4B") {
+        rarity = getRarityFromA4B(card.localId, card.name);
       }
       
       return {
