@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { CollectionProvider } from "@/lib/collection";
 import { LocaleProvider } from "@/lib/locale";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { NavWrapper } from "@/components/NavWrapper";
 import { getAllSets, getLocalImagePath } from "@/lib/data";
 
@@ -47,16 +48,18 @@ export default async function RootLayout({
   }));
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
-        <LocaleProvider>
-          <CollectionProvider>
-            {children}
-            <NavWrapper sets={setsForNav} />
-          </CollectionProvider>
-        </LocaleProvider>
+        <ThemeProvider>
+          <LocaleProvider>
+            <CollectionProvider>
+              {children}
+              <NavWrapper sets={setsForNav} />
+            </CollectionProvider>
+          </LocaleProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

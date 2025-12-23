@@ -53,7 +53,7 @@ export function PackOpeningClient({
   if (hasMultipleBoosters && !selectedBooster) {
     return (
       <div className="w-full min-h-[80vh] flex flex-col items-center justify-center p-4">
-        <h2 className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">
           Choose Your Pack
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl">
@@ -65,23 +65,19 @@ export function PackOpeningClient({
               <button
                 key={booster.id}
                 onClick={() => setSelectedBooster(booster.name)}
-                className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-6 border border-gray-700/50 hover:border-yellow-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20 hover:scale-105"
+                className="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-amber-400 dark:hover:border-gray-500 transition-colors"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
-
-                <div className="relative z-10">
-                  <div className="w-full aspect-[255/490] flex items-center justify-center mb-4 bg-black/30 rounded-xl overflow-hidden">
-                    <img
-                      src={boosterImageSrc}
-                      alt={booster.name}
-                      className="w-full h-auto"
-                    />
-                  </div>
-
-                  <h3 className="text-xl font-semibold text-center group-hover:text-yellow-400 transition-colors">
-                    {booster.name}
-                  </h3>
+                <div className="w-full aspect-[255/490] flex items-center justify-center mb-4 bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden">
+                  <img
+                    src={boosterImageSrc}
+                    alt={booster.name}
+                    className="w-full h-auto"
+                  />
                 </div>
+
+                <h3 className="text-xl font-semibold text-center text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-gray-300 transition-colors">
+                  {booster.name}
+                </h3>
               </button>
             );
           })}
@@ -89,7 +85,7 @@ export function PackOpeningClient({
 
         <button
           onClick={() => setSelectedBooster("random")}
-          className="mt-8 px-6 py-3 rounded-full bg-white/10 text-white border border-white/30 font-semibold hover:bg-white/20 transition-colors"
+          className="mt-8 px-6 py-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Random Pack
         </button>

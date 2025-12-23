@@ -317,7 +317,7 @@ export function WonderPick({ cards, setName, getImagePath }: WonderPickProps) {
 
       {/* Mute Button */}
       <button 
-        className="fixed top-20 right-4 z-50 w-10 h-10 rounded-full bg-black/40 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/60 hover:text-white transition-all"
+        className="fixed top-20 right-4 z-50 w-10 h-10 rounded-full bg-white/80 dark:bg-black/40 border border-gray-200 dark:border-white/20 flex items-center justify-center text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-black/60 hover:text-gray-900 dark:hover:text-white transition-all shadow-md dark:shadow-none"
         onClick={toggleMute}
       >
         {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
@@ -334,17 +334,17 @@ export function WonderPick({ cards, setName, getImagePath }: WonderPickProps) {
             className="flex flex-col items-center gap-6"
           >
             <div className="text-center mb-4">
-              <h2 className="text-2xl font-bold text-white mb-2 flex items-center justify-center gap-2">
-                <Wand2 className="w-6 h-6 text-yellow-400" />
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
+                <Wand2 className="w-6 h-6 text-amber-500 dark:text-yellow-400" />
                 Wonder Pick
               </h2>
-              <p className="text-gray-400 text-sm">{setName}</p>
-              <p className="text-gray-500 text-xs mt-2">Chọn 1 trong 5 thẻ bí ẩn</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">{setName}</p>
+              <p className="text-gray-400 dark:text-gray-500 text-xs mt-2">Chọn 1 trong 5 thẻ bí ẩn</p>
             </div>
 
             <motion.button
               onClick={startNewPick}
-              className="px-8 py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-bold text-lg hover:from-yellow-400 hover:to-amber-500 transition-all shadow-lg shadow-yellow-500/30"
+              className="px-8 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 dark:from-yellow-500 dark:to-amber-600 text-white dark:text-black font-bold text-lg hover:from-amber-400 hover:to-orange-400 dark:hover:from-yellow-400 dark:hover:to-amber-500 transition-all shadow-lg shadow-amber-500/30 dark:shadow-yellow-500/30"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -363,7 +363,7 @@ export function WonderPick({ cards, setName, getImagePath }: WonderPickProps) {
             className="flex flex-col items-center gap-4"
           >
             <motion.p
-              className="text-yellow-400 font-medium text-center"
+              className="text-amber-600 dark:text-yellow-400 font-medium text-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
@@ -416,7 +416,7 @@ export function WonderPick({ cards, setName, getImagePath }: WonderPickProps) {
 
             <motion.button
               onClick={startShuffle}
-              className="mt-4 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold hover:from-purple-400 hover:to-indigo-500 transition-all"
+              className="mt-4 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold hover:from-purple-400 hover:to-indigo-500 transition-all shadow-lg shadow-purple-500/30"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
@@ -438,7 +438,7 @@ export function WonderPick({ cards, setName, getImagePath }: WonderPickProps) {
             className="flex flex-col items-center gap-4"
           >
             <motion.p
-              className="text-yellow-400 font-medium"
+              className="text-amber-600 dark:text-yellow-400 font-medium"
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 0.6 }}
             >
@@ -483,7 +483,7 @@ export function WonderPick({ cards, setName, getImagePath }: WonderPickProps) {
             exit={{ opacity: 0 }}
             className="flex flex-col items-center gap-4"
           >
-            <p className="text-gray-300 text-sm mb-2">Chọn một thẻ!</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">Chọn một thẻ!</p>
             
             <div className="relative w-[340px] md:w-[560px] h-52 md:h-72 flex items-center justify-center">
               {pickCards.map((_, index) => (
@@ -534,7 +534,7 @@ export function WonderPick({ cards, setName, getImagePath }: WonderPickProps) {
           >
             {gameState === "suspense" && (
               <motion.p
-                className="text-yellow-400 font-medium"
+                className="text-amber-600 dark:text-yellow-400 font-medium"
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ repeat: Infinity, duration: 0.5 }}
               >
@@ -611,7 +611,7 @@ export function WonderPick({ cards, setName, getImagePath }: WonderPickProps) {
                 className="flex flex-col items-center gap-3 mt-4"
               >
                 <div className="text-center">
-                  <h3 className="text-white font-medium text-lg">{pickCards[selectedIndex].name}</h3>
+                  <h3 className="text-gray-900 dark:text-white font-medium text-lg">{pickCards[selectedIndex].name}</h3>
                   {playerPickedNew ? (
                     <motion.span 
                       className="inline-block bg-green-500 text-white text-xs px-3 py-1 rounded font-bold mt-2"
@@ -622,14 +622,14 @@ export function WonderPick({ cards, setName, getImagePath }: WonderPickProps) {
                       Thẻ mới!
                     </motion.span>
                   ) : (
-                    <span className="inline-block text-gray-400 text-xs mt-2">
+                    <span className="inline-block text-gray-500 dark:text-gray-400 text-xs mt-2">
                       Đã có trong bộ sưu tập
                     </span>
                   )}
                 </div>
 
                 <motion.button
-                  className="px-6 py-2.5 text-sm rounded-full bg-amber-500/90 text-black font-medium hover:bg-amber-400 transition-colors"
+                  className="px-6 py-2.5 text-sm rounded-full bg-amber-500 text-white dark:text-black font-medium hover:bg-amber-400 transition-colors"
                   onClick={reset}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}

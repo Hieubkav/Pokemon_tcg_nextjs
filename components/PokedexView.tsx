@@ -48,18 +48,18 @@ export function PokedexView({ isOpen, onClose, sets }: PokedexViewProps) {
   const progress = totalCount > 0 ? (collectedCount / totalCount) * 100 : 0;
 
   return (
-    <div className="fixed inset-0 bg-black flex flex-col z-50">
+    <div className="fixed inset-0 bg-gray-50 dark:bg-black flex flex-col z-50">
       {/* Header */}
-      <div className="bg-gray-900 border-b border-gray-800 px-4 py-3">
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700/50 px-4 py-3">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-gray-400" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-amber-500 dark:text-yellow-400" />
               Pokédex
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-white p-1"
+              className="text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-white p-1 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -76,8 +76,8 @@ export function PokedexView({ isOpen, onClose, sets }: PokedexViewProps) {
                 }}
                 className={`px-2.5 py-1 rounded text-xs transition-colors ${
                   selectedSet === set.id
-                    ? "bg-white text-gray-900"
-                    : "text-gray-400 hover:text-white"
+                    ? "bg-amber-500 dark:bg-white text-white dark:text-gray-900"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-transparent"
                 }`}
               >
                 {set.name}
@@ -92,8 +92,8 @@ export function PokedexView({ isOpen, onClose, sets }: PokedexViewProps) {
                 onClick={() => setSelectedBooster("all")}
                 className={`px-2 py-0.5 rounded text-[11px] transition-colors ${
                   selectedBooster === "all"
-                    ? "bg-gray-700 text-white"
-                    : "text-gray-500 hover:text-white"
+                    ? "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white"
+                    : "text-gray-500 hover:text-gray-900 dark:hover:text-white"
                 }`}
               >
                 All
@@ -104,8 +104,8 @@ export function PokedexView({ isOpen, onClose, sets }: PokedexViewProps) {
                   onClick={() => setSelectedBooster(booster.id)}
                   className={`px-2 py-0.5 rounded text-[11px] transition-colors ${
                     selectedBooster === booster.id
-                      ? "bg-gray-700 text-white"
-                      : "text-gray-500 hover:text-white"
+                      ? "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white"
+                      : "text-gray-500 hover:text-gray-900 dark:hover:text-white"
                   }`}
                 >
                   {booster.name}
@@ -116,9 +116,9 @@ export function PokedexView({ isOpen, onClose, sets }: PokedexViewProps) {
 
           {/* Progress Bar */}
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-1 bg-gray-800 rounded-full overflow-hidden">
+            <div className="flex-1 h-1 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
               <div
-                className="h-full bg-white/70 transition-all duration-300"
+                className="h-full bg-amber-500 dark:bg-white/70 transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -141,7 +141,7 @@ export function PokedexView({ isOpen, onClose, sets }: PokedexViewProps) {
                 <div
                   key={card.id}
                   className={`relative aspect-[2.5/3.5] rounded overflow-hidden ${
-                    collected ? "hover:ring-1 hover:ring-white/30" : "opacity-40"
+                    collected ? "hover:ring-1 hover:ring-amber-400 dark:hover:ring-white/30" : "opacity-40"
                   }`}
                   title={collected ? `${card.name} (x${count})` : `#${card.localId}`}
                 >
@@ -154,14 +154,14 @@ export function PokedexView({ isOpen, onClose, sets }: PokedexViewProps) {
                         loading="lazy"
                       />
                       {count > 1 && (
-                        <div className="absolute bottom-0 right-0 bg-white text-gray-900 text-[9px] font-medium px-1 rounded-tl">
+                        <div className="absolute bottom-0 right-0 bg-amber-500 dark:bg-white text-white dark:text-gray-900 text-[9px] font-medium px-1 rounded-tl">
                           {count}
                         </div>
                       )}
                     </>
                   ) : (
-                    <div className="w-full h-full bg-gray-900 flex items-center justify-center">
-                      <span className="text-[10px] text-gray-700">#{card.localId}</span>
+                    <div className="w-full h-full bg-gray-200 dark:bg-gray-900 flex items-center justify-center">
+                      <span className="text-[10px] text-gray-400 dark:text-gray-700">#{card.localId}</span>
                     </div>
                   )}
                 </div>

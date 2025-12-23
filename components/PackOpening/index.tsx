@@ -439,7 +439,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
 
       {/* Mute Button */}
       <button 
-        className="fixed top-20 right-4 z-50 w-10 h-10 rounded-full bg-black/40 border border-white/20 flex items-center justify-center text-white/70 hover:bg-black/60 hover:text-white transition-all"
+        className="fixed top-20 right-4 z-50 w-10 h-10 rounded-full bg-white/80 dark:bg-black/40 border border-gray-200 dark:border-white/20 flex items-center justify-center text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-black/60 hover:text-gray-900 dark:hover:text-white transition-all shadow-md dark:shadow-none"
         onClick={toggleMute}
       >
         {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
@@ -450,7 +450,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
         {gameState === "idle" && (
           <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-6">
             <motion.div
-              className="w-44 relative cursor-pointer rounded-xl overflow-hidden shadow-xl bg-black/80"
+              className="w-44 relative cursor-pointer rounded-xl overflow-hidden shadow-xl bg-gray-100 dark:bg-black/80"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               onClick={openPack}
@@ -466,7 +466,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
             {packSize > 1 && (
               <button
                 onClick={startMultiPack}
-                className="text-sm text-white/60 hover:text-white/90 underline underline-offset-4 transition-colors"
+                className="text-sm text-gray-500 dark:text-white/60 hover:text-gray-700 dark:hover:text-white/90 underline underline-offset-4 transition-colors"
               >
                 Open 10 packs (auto)
               </button>
@@ -478,7 +478,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
         {gameState === "opening" && (
           <motion.div key="opening" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center justify-center">
             <motion.div
-              className="w-44 relative rounded-xl overflow-hidden shadow-[0_0_50px_rgba(255,215,0,0.4)] bg-black/80"
+              className="w-44 relative rounded-xl overflow-hidden shadow-[0_0_50px_rgba(251,191,36,0.4)] dark:shadow-[0_0_50px_rgba(255,215,0,0.4)] bg-gray-100 dark:bg-black/80"
               initial={{ scale: 1, rotate: 0 }}
               animate={{ scale: [1, 1.04, 1.08, 1.1, 0], rotate: [0, -2, 2, -1, 0], y: [0, -6, -10, -14, -60] }}
               transition={{ duration: 1.4, ease: "easeInOut" }}
@@ -498,7 +498,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
             <div className="flex gap-3 mt-4">
               {gameState === "revealing" && flippedIndices.size < packCards.length && (
                 <motion.button
-                  className="px-5 py-2 text-sm rounded-full bg-white/10 text-white/80 border border-white/20 hover:bg-white/15 transition-colors"
+                  className="px-5 py-2 text-sm rounded-full bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-white/80 border border-gray-300 dark:border-white/20 hover:bg-gray-300 dark:hover:bg-white/15 transition-colors"
                   onClick={revealAll}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
@@ -508,7 +508,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
               )}
               {gameState === "revealed" && (
                 <motion.button
-                  className="px-5 py-2 text-sm rounded-full bg-amber-500/90 text-black font-medium hover:bg-amber-400 transition-colors"
+                  className="px-5 py-2 text-sm rounded-full bg-amber-500 text-white dark:text-black font-medium hover:bg-amber-400 transition-colors"
                   onClick={reset}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -525,9 +525,9 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
         {/* Multi-pack Opening Animation */}
         {gameState === "multi-opening" && (
           <motion.div key="multi-opening" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center justify-center gap-4">
-            <div className="text-sm text-white/70">Pack {currentMultiIndex + 1} / {MULTI_PACK_COUNT}</div>
+            <div className="text-sm text-gray-600 dark:text-white/70">Pack {currentMultiIndex + 1} / {MULTI_PACK_COUNT}</div>
             <motion.div
-              className="w-40 relative rounded-xl overflow-hidden shadow-[0_0_40px_rgba(255,215,0,0.3)] bg-black/80"
+              className="w-40 relative rounded-xl overflow-hidden shadow-[0_0_40px_rgba(251,191,36,0.3)] dark:shadow-[0_0_40px_rgba(255,215,0,0.3)] bg-gray-100 dark:bg-black/80"
               initial={{ scale: 1, rotate: 0 }}
               animate={{ scale: [1, 1.03, 1.06, 1.08, 0], rotate: [0, -1.5, 1.5, -1, 0], y: [0, -5, -8, -12, -50] }}
               transition={{ duration: 1.2, ease: "easeInOut" }}
@@ -540,13 +540,13 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
         {/* Multi-pack Cards Revealing/Viewing */}
         {(gameState === "multi-revealing" || gameState === "multi-viewing") && (
           <motion.div key="multi-cards" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full flex flex-col items-center gap-3 max-w-2xl px-2">
-            <div className="text-sm text-white/70 mb-1">Pack {currentMultiIndex + 1} / {MULTI_PACK_COUNT}</div>
+            <div className="text-sm text-gray-600 dark:text-white/70 mb-1">Pack {currentMultiIndex + 1} / {MULTI_PACK_COUNT}</div>
             <div className="flex flex-col items-center gap-2 sm:gap-3 w-full">
               {renderCards(true)}
             </div>
             {gameState === "multi-viewing" && (
               <motion.div 
-                className="mt-3 text-xs text-white/40"
+                className="mt-3 text-xs text-gray-400 dark:text-white/40"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
@@ -559,7 +559,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
         {/* Multi-pack Summary */}
         {gameState === "multi-summary" && (
           <motion.div key="multi-summary" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full flex flex-col items-center gap-5 max-w-3xl">
-            <h2 className="text-lg font-medium text-white/90">{MULTI_PACK_COUNT} packs opened!</h2>
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white/90">{MULTI_PACK_COUNT} packs opened!</h2>
 
             <div className="w-full">
               <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-1 max-h-[350px] overflow-y-auto p-1">
@@ -575,7 +575,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
                         className={`aspect-[5/7] rounded overflow-hidden relative ${
                           isLegendary ? "ring-2 ring-cyan-400" : 
                           isSuperRare ? "ring-2 ring-purple-400" : 
-                          isRare ? "ring-1 ring-yellow-400" : ""
+                          isRare ? "ring-1 ring-amber-400 dark:ring-yellow-400" : ""
                         }`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -592,7 +592,7 @@ export function PackOpening({ cards, setId, setName, packImage, getImagePath, bo
             </div>
 
             <motion.button
-              className="px-6 py-2.5 text-sm rounded-full bg-amber-500/90 text-black font-medium hover:bg-amber-400 transition-colors"
+              className="px-6 py-2.5 text-sm rounded-full bg-amber-500 text-white dark:text-black font-medium hover:bg-amber-400 transition-colors"
               onClick={reset}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
